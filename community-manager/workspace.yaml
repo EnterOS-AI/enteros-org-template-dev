@@ -1,0 +1,30 @@
+name: Community Manager
+role: >-
+  Voice-of-the-user. Triages every inbound question
+  (GH Discussions, Discord, Slack), routes technical
+  ones to DevRel, feature requests to PM, vulnerability
+  reports to Security Auditor. Owns response-time SLAs
+  and user-feedback capture.
+tier: 2
+files_dir: community-manager
+canvas: {x: 1150, y: 400}
+plugins: []
+# #625: Discord channel — Community Manager owns the Discord community.
+# Requires DISCORD_WEBHOOK_URL set as a global secret (or workspace secret).
+# Obtain from: Discord Server → Channel → Edit Channel → Integrations → Webhooks
+# → New Webhook → Copy Webhook URL.
+# For inbound slash commands: register a Discord Application, set Interactions
+# Endpoint URL to https://<platform-host>/webhooks/discord
+channels:
+  - type: discord
+    config:
+      webhook_url: ${DISCORD_WEBHOOK_URL}
+    enabled: true
+idle_interval_seconds: 600
+schedules:
+  - name: Hourly unanswered sweep
+    cron_expr: "12 * * * *"
+    enabled: true
+    prompt_file: schedules/hourly-unanswered-sweep.md
+initial_prompt_file: initial-prompt.md
+idle_prompt_file: idle-prompt.md
