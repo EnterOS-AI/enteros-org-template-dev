@@ -11,18 +11,18 @@ STEP 0 — Guards + learnings
 STEP 1 — List open PRs across ALL your repos:
   for repo in molecule-app molecule-tenant-proxy molecule-ai-workspace-runtime docs landingpage molecule-ci molecule-ai-status; do
     echo "=== $repo ==="
-    gh pr list --repo Molecule-AI/$repo --state open --json number,title,author,isDraft,mergeable,statusCheckRollup 2>/dev/null
+    tea pr list --repo molecule-ai/$repo --state open --json number,title,author,isDraft,mergeable,statusCheckRollup 2>/dev/null
   done
   Also check plugin and template repos:
-    gh repo list Molecule-AI --limit 60 --json name -q '.[].name' | grep -E "plugin-|template-" | while read repo; do
-      OPEN=$(gh pr list --repo Molecule-AI/$repo --state open --json number -q 'length' 2>/dev/null)
+    tea repos ls --org molecule-ai --limit 60 --json name -q '.[].name' | grep -E "plugin-|template-" | while read repo; do
+      OPEN=$(tea pr list --repo molecule-ai/$repo --state open --json number -q 'length' 2>/dev/null)
       [ "$OPEN" -gt 0 ] 2>/dev/null && echo "$repo has $OPEN open PRs"
     done
 
 STEP 2 — 7-gate PR verification (each PR in turn)
 - Gates: CI, build, tests, security, design, line-review, Playwright-if-frontend
 - Mechanical fix on-branch + commit fix(gate-N) + push + poll CI
-- Merge (gh pr merge --merge --delete-branch --repo Molecule-AI/<repo>) ONLY if:
+- Merge (tea pr merge --merge --delete-branch --repo molecule-ai/<repo>) ONLY if:
     all 7 gates pass +
     NOT auth/billing/schema/data-deletion (those hold for CEO)
 - BEFORE --delete-branch: check for downstream stacked PRs
@@ -30,7 +30,7 @@ STEP 2 — 7-gate PR verification (each PR in turn)
 
 STEP 3 — Issue pickup (cap 2 per tick)
   for repo in molecule-app molecule-tenant-proxy docs landingpage; do
-    gh issue list --repo Molecule-AI/$repo --state open --label needs-work --json number,title --limit 3
+    tea issue list --repo molecule-ai/$repo --state open --label needs-work --json number,title --limit 3
   done
   Self-assign, branch, implement, draft PR.
 

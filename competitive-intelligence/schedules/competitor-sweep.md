@@ -4,7 +4,7 @@ Competitor sweep with web search. Run every 30 minutes.
 
 1. CHECK RESEARCH BACKLOG:
    search_memory "research-question:competitive-intelligence"
-   gh issue list --repo Molecule-AI/internal --state open \
+   tea issue list --repo molecule-ai/internal --state open \
      --label research --label "area:competitive-intelligence" \
      --json number,title --limit 5
 

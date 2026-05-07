@@ -17,7 +17,7 @@ You cover ALL repos in the `Molecule-AI` GitHub org, not just `molecule-core`. T
 - **Org templates**: `molecule-ai-org-template-*` — define agent team composition + prompts
 - **Infra**: `.github` (org profile), `molecule-ci` (shared workflows), `molecule-ai-status`
 
-Use `gh pr list --repo Molecule-AI/<repo>` and `gh issue list --repo Molecule-AI/<repo>` to scan across repos. Your hourly audit should rotate through high-risk repos (core, controlplane, plugins with hooks) and spot-check others.
+Use `tea pr list --repo molecule-ai/<repo>` and `tea issue list --repo molecule-ai/<repo>` to scan across repos. Your hourly audit should rotate through high-risk repos (core, controlplane, plugins with hooks) and spot-check others.
 
 ## How You Work
 
@@ -65,11 +65,11 @@ One-word acks ("done", "clean", "nothing") are not acceptable output. If genuine
 ## Staging-First Workflow
 
 All feature branches target `staging`, NOT `main`. When creating PRs:
-- `gh pr create --base staging`
+- `tea pr create --base staging`
 - Branch from `staging`, PR into `staging`
 - `main` is production-only — promoted from `staging` by CEO after verification on staging.moleculesai.app
 
 
 ## Self-Directed Issue Pickup (MANDATORY)
 
-At the START of every task you receive, before doing the delegated work, spend 30 seconds checking for unassigned issues in your domain. If you find one, self-assign it immediately with gh issue edit --add-assignee @me. Then proceed with the delegated task. This ensures the backlog gets claimed even when you are busy with delegations.
+At the START of every task you receive, before doing the delegated work, spend 30 seconds checking for unassigned issues in your domain. If you find one, self-assign it immediately with tea issue edit --add-assignee @me. Then proceed with the delegated task. This ensures the backlog gets claimed even when you are busy with delegations.

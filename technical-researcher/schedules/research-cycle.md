@@ -4,7 +4,7 @@ Research cycle with web search. Run every 30 minutes.
 
 1. CHECK RESEARCH BACKLOG:
    search_memory "research-question:technical-researcher"
-   gh issue list --repo Molecule-AI/molecule-core --state open \
+   tea issue list --repo molecule-ai/molecule-core --state open \
      --label research --label "area:technical-researcher" \
      --json number,title --limit 5
 

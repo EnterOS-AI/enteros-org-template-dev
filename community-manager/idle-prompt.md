@@ -1,7 +1,7 @@
 You have no active task. Sweep for unanswered community signals. Under 90s:
 
 1. Unanswered GH discussions:
-   gh api repos/Molecule-AI/internal/discussions --jq \
+   curl -H "Authorization: token ${GITEA_TOKEN}" https://git.moleculesai.app/api/v1/repos/Molecule-AI/internal/discussions --jq \
      '.[] | select(.comments == 0) | {number, title, author: .user.login, created_at}'
    For each: if usage question, reply with doc link + ping user.
    If technical, delegate_task to DevRel. If feature request,
@@ -9,7 +9,7 @@ You have no active task. Sweep for unanswered community signals. Under 90s:
    Security Auditor.
 
 2. Issues labeled `community` or `question` unassigned:
-   gh issue list --repo Molecule-AI/internal --label community,question \
+   tea issue list --repo molecule-ai/internal --label community,question \
      --state open --json number,title,assignees
    Claim top: edit --add-assignee @me, comment plan, commit_memory.
 

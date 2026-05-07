@@ -3,8 +3,8 @@ IMPORTANT: Check Molecule-AI/internal repo for roadmap (PLAN.md), known issues, 
 Independent work cycle for CI, status, internal. Be productive every tick.
 
 STEP 1 — CI HEALTH CHECK (across ALL org repos):
-  gh repo list Molecule-AI --limit 60 --json name -q '.[].name' | while read repo; do
-    FAILED=$(gh run list --repo Molecule-AI/$repo --status failure --limit 1 --json databaseId -q '.[].databaseId' 2>/dev/null)
+  tea repos ls --org molecule-ai --limit 60 --json name -q '.[].name' | while read repo; do
+    FAILED=$(tea action list --repo molecule-ai/$repo --status failure --limit 1 --json databaseId -q '.[].databaseId' 2>/dev/null)
     if [ -n "$FAILED" ]; then
       echo "FAILING CI: Molecule-AI/$repo — run $FAILED"
     fi
@@ -12,7 +12,7 @@ STEP 1 — CI HEALTH CHECK (across ALL org repos):
 
 STEP 2 — DEPENDABOT CHECK:
   for repo in molecule-core molecule-controlplane molecule-app molecule-tenant-proxy docs; do
-    gh pr list --repo Molecule-AI/$repo --state open --label dependencies --json number,title --limit 3
+    tea pr list --repo molecule-ai/$repo --state open --label dependencies --json number,title --limit 3
   done
   Review and approve safe dependency updates.
 
@@ -21,9 +21,9 @@ STEP 3 — STATUS PAGE ACCURACY:
   Cross-check Upptime monitors against actual service endpoints.
 
 STEP 4 — FIND WORK:
-  gh issue list --repo Molecule-AI/molecule-ci --state open --label needs-work --json number,title --limit 3
-  gh issue list --repo Molecule-AI/molecule-ai-status --state open --label needs-work --json number,title --limit 3
-  gh issue list --repo Molecule-AI/internal --state open --label needs-work --json number,title --limit 3
+  tea issue list --repo molecule-ai/molecule-ci --state open --label needs-work --json number,title --limit 3
+  tea issue list --repo molecule-ai/molecule-ai-status --state open --label needs-work --json number,title --limit 3
+  tea issue list --repo molecule-ai/internal --state open --label needs-work --json number,title --limit 3
 
 STEP 5 — If CI is broken, fix it. Branch, commit, push, PR. Return to staging.
 

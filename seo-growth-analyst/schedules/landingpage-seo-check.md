@@ -2,8 +2,8 @@ Landing page SEO audit. You co-own Molecule-AI/landingpage with Content Marketer
 
 ## Step 1: Check repo
 ```bash
-gh pr list --repo Molecule-AI/landingpage --state open --json number,title
-gh issue list --repo Molecule-AI/landingpage --state open --json number,title
+tea pr list --repo molecule-ai/landingpage --state open --json number,title
+tea issue list --repo molecule-ai/landingpage --state open --json number,title
 ```
 
 ## Step 2: SEO checks

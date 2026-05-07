@@ -9,7 +9,7 @@ Keep them busy with real research, not idle between eco-watch fires.
 Before dispatching new research, drain pending reviews:
 
 ```bash
-gh pr list --repo Molecule-AI/internal --state open \
+tea pr list --repo molecule-ai/internal --state open \
   --json number,title,author --jq '.[] | "\(.number) \(.author.login): \(.title[:70])"'
 ```
 
@@ -28,7 +28,7 @@ team.
        print(f\"{w['name']:25} busy={'Y' if w.get('active_tasks',0)>0 else 'N'}\")"
 
 2. CHECK RESEARCH BACKLOG:
-   - gh issue list --repo Molecule-AI/internal --state open --label research,area:research-lead --json number,title
+   - tea issue list --repo molecule-ai/internal --state open --label research,area:research-lead --json number,title
    - search_memory "research-question" — questions from PM waiting for an answer
    - Questions you yourself stashed from eco-watch reflection
 
@@ -37,7 +37,7 @@ team.
    pursuing that doesn't have an issue yet, create one BEFORE dispatching. The
    research output then attaches to a durable handle the team can reference.
 
-   gh issue create --repo Molecule-AI/internal \
+   tea issue create --repo molecule-ai/internal \
      --title "research: <one-line question>" \
      --label needs-work \
      --label research \

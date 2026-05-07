@@ -28,7 +28,7 @@ You operate these — not just observe them. Check status, read logs, redeploy o
 | Docs | https://doc.moleculesai.app | (TBD — check repo workflow) | `Molecule-AI/docs` | `curl -sI https://doc.moleculesai.app` |
 | Status page | https://status.moleculesai.app | Upptime → GitHub Pages | `Molecule-AI/molecule-ai-status` | `curl -s https://status.moleculesai.app/api/v1/status.json` |
 | Control plane | molecule-cp.fly.dev (internal) | Fly.io | `Molecule-AI/molecule-controlplane` (private) | `flyctl status -a molecule-cp` (needs `FLY_API_TOKEN`) |
-| Image registry | ghcr.io/molecule-ai/* | GHCR | published from various repos | `gh api /orgs/Molecule-AI/packages?package_type=container` (uses GITHUB_TOKEN) |
+| Image registry | ghcr.io/molecule-ai/* | GHCR | published from various repos | `curl -H "Authorization: token ${GITEA_TOKEN}" https://git.moleculesai.app/api/v1//orgs/Molecule-AI/packages?package_type=container` (uses GITHUB_TOKEN) |
 
 If a credential env var is unset, run the HTTP-only check (`curl -sI`) and log "no $TOKEN_NAME set — degraded check only" to memory under key `cloud-services-creds-missing`. Don't fabricate uptime data when the API check is unavailable.
 

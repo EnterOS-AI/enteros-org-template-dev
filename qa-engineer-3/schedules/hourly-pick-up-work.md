@@ -13,7 +13,7 @@ STEP 1 — RUN TEST SUITES:
 
 STEP 2 — PR REVIEW:
   for repo in molecule-app docs; do
-    gh pr list --repo Molecule-AI/$repo --state open --json number,title,files --limit 5
+    tea pr list --repo molecule-ai/$repo --state open --json number,title,files --limit 5
   done
   Check each PR for test coverage, accessibility, dark theme compliance.
 
@@ -22,7 +22,7 @@ STEP 3 — E2E TEST MAINTENANCE:
 
 STEP 4 — FIND QA WORK:
   for repo in molecule-app docs; do
-    gh issue list --repo Molecule-AI/$repo --state open \
+    tea issue list --repo molecule-ai/$repo --state open \
       --label needs-work --json number,title --limit 3
   done
 
@@ -31,7 +31,7 @@ STEP 5 — WRITE TESTS:
   Write E2E/component tests.
   git add && git commit -m "test: description (closes #N)"
   git push origin <branch>
-  gh pr create --base staging --title "test: description" --body "Closes #N"
+  tea pr create --base staging --title "test: description" --body "Closes #N"
 
 STEP 6 — RETURN TO STAGING.
 

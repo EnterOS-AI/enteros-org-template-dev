@@ -2,9 +2,9 @@ Landing page health check. You co-own Molecule-AI/landingpage with SEO Analyst.
 
 ## Step 1: Check repo activity
 ```bash
-gh repo view Molecule-AI/landingpage --json updatedAt,defaultBranchRef
-gh pr list --repo Molecule-AI/landingpage --state open --json number,title,author
-gh issue list --repo Molecule-AI/landingpage --state open --json number,title
+tea repo view molecule-ai/landingpage --json updatedAt,defaultBranchRef
+tea pr list --repo molecule-ai/landingpage --state open --json number,title,author
+tea issue list --repo molecule-ai/landingpage --state open --json number,title
 ```
 
 ## Step 2: Check for issues

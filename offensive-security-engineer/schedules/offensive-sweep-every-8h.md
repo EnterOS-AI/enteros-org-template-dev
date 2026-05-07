@@ -11,7 +11,7 @@ Recurring offensive sweep. Probe + file findings + escalate. Stay in scope.
 
    Pull every Molecule-AI plugin/template repo state too — supply chain
    surface changes outside molecule-core matter:
-   gh repo list Molecule-AI --json name,updatedAt --limit 60 \
+   tea repos ls --org molecule-ai --json name,updatedAt --limit 60 \
      | python -c "import json, sys; [print(r['name']) for r in json.load(sys.stdin) if r['updatedAt'] > '$(date -u -d '8 hours ago' +%Y-%m-%dT%H:%M:%SZ)']"
 
 2. ATTACK SURFACE DELTA — handlers/middleware that changed since last sweep:
@@ -65,7 +65,7 @@ Recurring offensive sweep. Probe + file findings + escalate. Stay in scope.
 
 7. FINDINGS — each becomes a GH issue with three artifacts:
    For each finding:
-     gh issue create --repo Molecule-AI/<repo> \
+     tea issue create --repo molecule-ai/<repo> \
        --title "[OFFENSIVE] <one-line summary>" \
        --label security --label offensive \
        --body "$(cat <<EOF

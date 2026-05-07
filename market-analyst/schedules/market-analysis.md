@@ -4,7 +4,7 @@ Market analysis with web search. Run every 30 minutes.
 
 1. CHECK RESEARCH BACKLOG:
    search_memory "research-question:market-analyst"
-   gh issue list --repo Molecule-AI/internal --state open \
+   tea issue list --repo molecule-ai/internal --state open \
      --label research --label "area:market-analyst" \
      --json number,title --limit 5
 

@@ -2,7 +2,7 @@ IMPORTANT: Check Molecule-AI/internal repo for roadmap (PLAN.md), known issues, 
 
 Refresh the topic backlog from recent signals.
 
-1. Pull: gh pr list --state merged --limit 10 --json title,number
+1. Pull: tea pr list --state merged --limit 10 --json title,number
    + docs/ecosystem-watch.md last-week entries
    + competitor blog feeds (Hermes, Letta, n8n — see positioning.md)
 2. Rank candidates: technical-deep-dive vs positioning-story, target keyword pull.
