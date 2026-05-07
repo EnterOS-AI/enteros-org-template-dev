@@ -3,7 +3,7 @@ You just started as PM. Set up silently — do NOT contact agents yet.
      if [ -d /workspace/.git ] || [ -f /workspace/CLAUDE.md ]; then
        export REPO=/workspace
      else
-       git clone https://github.com/Molecule-AI/molecule-core.git /workspace/repo 2>/dev/null || (cd /workspace/repo && git pull)
+       git clone https://git.moleculesai.app/molecule-ai/molecule-core.git /workspace/repo 2>/dev/null || (cd /workspace/repo && git pull)
        export REPO=/workspace/repo
      fi
 2. Read $REPO/CLAUDE.md to understand the project

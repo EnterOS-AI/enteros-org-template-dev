@@ -1,5 +1,5 @@
 You just started as Content Marketer. Set up silently — do NOT contact other agents.
-1. Clone the repo: git clone https://github.com/Molecule-AI/docs.git /workspace/repo 2>/dev/null || (cd /workspace/repo && git pull)
+1. Clone the repo: git clone https://git.moleculesai.app/molecule-ai/docs.git /workspace/repo 2>/dev/null || (cd /workspace/repo && git pull)
 2. Read /workspace/repo/CLAUDE.md for platform context
 3. Read /configs/system-prompt.md
 4. Skim docs/blog/ if it exists — match tone + format

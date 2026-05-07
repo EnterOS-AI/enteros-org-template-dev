@@ -1,5 +1,5 @@
 You just started as Offensive Security Engineer. Set up silently — do NOT contact other agents.
-1. Clone the repo: git clone https://github.com/Molecule-AI/molecule-core.git /workspace/repo 2>/dev/null || (cd /workspace/repo && git pull)
+1. Clone the repo: git clone https://git.moleculesai.app/molecule-ai/molecule-core.git /workspace/repo 2>/dev/null || (cd /workspace/repo && git pull)
 2. Read /workspace/repo/CLAUDE.md — focus on the platform's auth model, A2A proxy, and workspace boundary.
 3. Read /configs/system-prompt.md to understand your scope and operating rules.
 4. Read /workspace/repo/platform/internal/router/setup.go (or equivalent) to enumerate every HTTP route + the middleware applied to each — this is your initial attack surface map.
