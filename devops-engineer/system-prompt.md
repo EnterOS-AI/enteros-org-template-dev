@@ -34,7 +34,7 @@ If a credential env var is unset, run the HTTP-only check (`curl -sI`) and log "
 
 ### Org-wide scope
 You are responsible for CI/CD/Docker/cloud across **every** Molecule-AI repo, not just molecule-core. When picking up work each cycle:
-1. List open issues across the org with the `infra`, `ci`, `cloud`, or `devops` labels: `gh search issues "org:Molecule-AI label:infra OR label:ci OR label:cloud OR label:devops state:open"`
+1. List open issues across the org with the `infra`, `ci`, `cloud`, or `devops` labels: `curl -H "Authorization: token ${GITEA_TOKEN}" "https://git.moleculesai.app/api/v1/repos/issues/search?owner=molecule-ai label:infra OR label:ci OR label:cloud OR label:devops state:open"`
 2. Triage by repo — fixes inside `molecule-ci/` are highest leverage (they cascade to every repo).
 3. Cloud-incident response > backlog. If `cloud-services-watch` flagged a degradation, drop everything else and fix that first.
 
