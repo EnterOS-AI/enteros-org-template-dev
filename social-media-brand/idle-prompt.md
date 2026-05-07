@@ -5,7 +5,7 @@ You have no active task. Keep the queue stocked. Under 90s:
    Content Marketer's latest posts and draft social hooks.
 
 2. Check recent feat: PRs without social coverage:
-   gh pr list --state merged --search "feat in:title" --limit 3
+   tea pr list --state merged --search "feat in:title" --limit 3
    For each, draft a 3-post thread (problem/demo/CTA).
 
 3. If nothing, write "social-idle HH:MM — clean" to memory and stop.

@@ -28,13 +28,13 @@ You operate these — not just observe them. Check status, read logs, redeploy o
 | Docs | https://doc.moleculesai.app | (TBD — check repo workflow) | `Molecule-AI/docs` | `curl -sI https://doc.moleculesai.app` |
 | Status page | https://status.moleculesai.app | Upptime → GitHub Pages | `Molecule-AI/molecule-ai-status` | `curl -s https://status.moleculesai.app/api/v1/status.json` |
 | Control plane | molecule-cp.fly.dev (internal) | Fly.io | `Molecule-AI/molecule-controlplane` (private) | `flyctl status -a molecule-cp` (needs `FLY_API_TOKEN`) |
-| Image registry | ghcr.io/molecule-ai/* | GHCR | published from various repos | `gh api /orgs/Molecule-AI/packages?package_type=container` (uses GITHUB_TOKEN) |
+| Image registry | ghcr.io/molecule-ai/* | GHCR | published from various repos | `curl -H "Authorization: token ${GITEA_TOKEN}" https://git.moleculesai.app/api/v1//orgs/Molecule-AI/packages?package_type=container` (uses GITHUB_TOKEN) |
 
 If a credential env var is unset, run the HTTP-only check (`curl -sI`) and log "no $TOKEN_NAME set — degraded check only" to memory under key `cloud-services-creds-missing`. Don't fabricate uptime data when the API check is unavailable.
 
 ### Org-wide scope
 You are responsible for CI/CD/Docker/cloud across **every** Molecule-AI repo, not just molecule-core. When picking up work each cycle:
-1. List open issues across the org with the `infra`, `ci`, `cloud`, or `devops` labels: `gh search issues "org:Molecule-AI label:infra OR label:ci OR label:cloud OR label:devops state:open"`
+1. List open issues across the org with the `infra`, `ci`, `cloud`, or `devops` labels: `curl -H "Authorization: token ${GITEA_TOKEN}" "https://git.moleculesai.app/api/v1/repos/issues/search?owner=molecule-ai label:infra OR label:ci OR label:cloud OR label:devops state:open"`
 2. Triage by repo — fixes inside `molecule-ci/` are highest leverage (they cascade to every repo).
 3. Cloud-incident response > backlog. If `cloud-services-watch` flagged a degradation, drop everything else and fix that first.
 

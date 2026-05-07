@@ -7,15 +7,15 @@ Under 90 seconds:
    - Check /tmp/delegation_results.jsonl for Dev Lead dispatches.
 
 2. Poll open infra/CI issues:
-   gh issue list --repo Molecule-AI/molecule-core --state open \
+   tea issue list --repo molecule-ai/molecule-core --state open \
      --json number,title,labels,assignees
    Filter: assignees == [] AND labels intersect any of
    {docker, ci, deployment, infra, devops, bug}.
    Priority: security > bug > feature. Pick the TOP match.
 
 3. Claim it publicly:
-   - gh issue edit <N> --add-assignee @me
-   - gh issue comment <N> --body "Picking this up. Branch
+   - tea issue edit <N> --add-assignee @me
+   - tea issue comment <N> --body "Picking this up. Branch
      fix/issue-<N>-<slug>. Plan: <1-line approach>."
    - commit_memory "task-assigned:devops-engineer:issue-<N>"
 

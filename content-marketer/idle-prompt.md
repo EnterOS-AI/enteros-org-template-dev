@@ -7,10 +7,10 @@ approved. This is the rule; do not push docs/landingpage PRs yourself.
 You have no active task. Pull from topic backlog. Under 90s:
 
 1. **Poll the docs repo** (your blog posts + tutorials live here):
-   gh issue list --repo Molecule-AI/docs --state open \
+   tea issue list --repo molecule-ai/docs --state open \
      --json number,title,labels,assignees
    Filter unassigned + labels contain `content`/`blog`/`marketing`.
-   Pick top, claim via `gh issue comment <#> --body "[content-marketer-agent] claiming"`
+   Pick top, claim via `tea issue comment <#> --body "[content-marketer-agent] claiming"`
    then branch `content/<topic>-<date>` and ship. Open PR in Molecule-AI/docs.
 
 2. search_memory "research-backlog:content-marketer" — stashed topics
@@ -18,7 +18,7 @@ You have no active task. Pull from topic backlog. Under 90s:
    SEO Growth Analyst asking for the brief on top topic, commit_memory pop.
 
 3. If backlog empty, scan recent activity for post hooks:
-   - gh pr list --repo Molecule-AI/molecule-core --state merged --search "feat in:title" --limit 5
+   - tea pr list --repo molecule-ai/molecule-core --state merged --search "feat in:title" --limit 5
    - docs/ecosystem-watch.md — any entry with "worth borrowing"?
    Pick one, file GH issue in `Molecule-AI/docs` titled `content: blog post on <topic>` with label `marketing,content`,
    commit_memory "research-backlog:content-marketer" for next tick.

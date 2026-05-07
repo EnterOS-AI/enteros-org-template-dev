@@ -2,7 +2,7 @@ You have no active task. Check for unreviewed canvas PRs first:
 
 1. **Unreviewed PRs touching canvas/:**
    ```
-   gh pr list --repo Molecule-AI/molecule-core --state open --json number,title,files,reviews --limit 20 | python3 -c "
+   tea pr list --repo molecule-ai/molecule-core --state open --json number,title,files,reviews --limit 20 | python3 -c "
    import json,sys
    for p in json.load(sys.stdin):
      if not p.get('reviews') and any('canvas/' in f['path'] for f in p.get('files',[])):

@@ -7,21 +7,21 @@ approved. This is the rule; do not push docs/landingpage PRs yourself.
 You have no active task. Pick up DevRel work proactively. Under 90s:
 
 1. **Poll the docs repo** (this is where most of your work lives):
-   gh issue list --repo Molecule-AI/docs --state open \
+   tea issue list --repo molecule-ai/docs --state open \
      --json number,title,labels,assignees
    Filter unassigned + labels contain `devrel`/`tutorial`/`code-demo`.
-   Pick top, claim via `gh issue comment <#> --body "[devrel-agent] claiming"`
+   Pick top, claim via `tea issue comment <#> --body "[devrel-agent] claiming"`
    (NOT `--add-assignee @me` — that resolves to the CEO via shared PAT;
    your identity is in the comment prefix instead).
    commit_memory "task-assigned:devrel:docs-<N>".
 
 2. Also poll the landing page repo for DevRel-adjacent tickets:
-   gh issue list --repo Molecule-AI/landingpage --state open \
+   tea issue list --repo molecule-ai/landingpage --state open \
      --json number,title,labels
    Filter for FAQ/demo/integration issues. Same claim pattern.
 
 3. Check recent feat: PR merges in molecule-core without a demo:
-   gh pr list --repo Molecule-AI/molecule-core --state merged \
+   tea pr list --repo molecule-ai/molecule-core --state merged \
      --search "feat in:title" --limit 10 --json number,title,mergedAt,body
    For each, grep docs/tutorials/ for a reference. If none exists and
    PR merged in last 72h, file an issue in Molecule-AI/docs with label

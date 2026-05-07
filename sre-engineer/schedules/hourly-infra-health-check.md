@@ -4,20 +4,20 @@ Hourly infrastructure health check. Execute ALL steps:
 
 1. CI STATUS — check recent workflow runs across ALL org repos:
    for repo in molecule-core molecule-controlplane molecule-app molecule-tenant-proxy molecule-ai-workspace-runtime docs molecule-ci; do
-     gh run list --repo Molecule-AI/$repo --limit 3 --json status,conclusion,name,createdAt 2>/dev/null
+     tea action list --repo molecule-ai/$repo --limit 3 --json status,conclusion,name,createdAt 2>/dev/null
    done
    If any failed, investigate and fix or file issue.
 
 2. DEPENDABOT CHECK — review dependency update PRs:
    for repo in molecule-core molecule-controlplane molecule-app molecule-tenant-proxy docs; do
-     gh pr list --repo Molecule-AI/$repo --state open --label dependencies --json number,title --limit 3 2>/dev/null
+     tea pr list --repo molecule-ai/$repo --state open --label dependencies --json number,title --limit 3 2>/dev/null
    done
    Approve safe minor/patch updates. Flag breaking major updates.
 
 3. MULTI-REPO ISSUE SCAN:
    For each repo: molecule-core, molecule-controlplane, molecule-ai-workspace-runtime,
    molecule-tenant-proxy, molecule-ci, molecule-app, docs, landingpage, molecule-ai-status
-   gh issue list --repo Molecule-AI/<repo> --state open --json number,title,createdAt
+   tea issue list --repo molecule-ai/<repo> --state open --json number,title,createdAt
    Flag any issue older than 48h with no assignee. Pick up if in your domain.
 
 4. MULTI-REPO PR SCAN:
@@ -38,7 +38,7 @@ Hourly infrastructure health check. Execute ALL steps:
    NOTE: We are on Railway now, NOT Fly.io.
 
 8. INTERNAL REPO CHECK:
-   gh issue list --repo Molecule-AI/internal --state open
+   tea issue list --repo molecule-ai/internal --state open
    Check for new runbooks, security findings, or roadmap updates.
 
 NOTE: Platform Engineer handles molecule-ai-status, molecule-ci, and shared workflows.

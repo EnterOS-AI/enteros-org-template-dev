@@ -25,12 +25,12 @@ Multi-repo security audit. Rotate across org repos every cycle.
       - go mod tidy + check for CVEs (if go.mod)
 
    d. OPEN PR REVIEW:
-      gh pr list --repo Molecule-AI/${repo} --state open --json number
-      For each: gh pr diff | grep '^+' for injection/exec/unsafe patterns.
+      tea pr list --repo molecule-ai/${repo} --state open --json number
+      For each: tea pr diff | grep '^+' for injection/exec/unsafe patterns.
 
 3. FILE ISSUES for every HIGH+ finding:
-   Dedupe: gh issue list --repo Molecule-AI/<repo> --search "<category>" --state open
-   gh issue create with severity, file:line, repro, proposed fix.
+   Dedupe: tea issue list --repo molecule-ai/<repo> --search "<category>" --state open
+   tea issue create with severity, file:line, repro, proposed fix.
 
 4. ROUTING:
    delegate_task to PM with summary: repos audited, severity counts, issue numbers.

@@ -10,7 +10,7 @@ You have no active task. Growth data never sleeps. Under 90s:
    If yes, delegate_task to Content Marketer: "brief needed for <keyword>".
 
 2. Check open issues labeled `growth` unassigned:
-   gh issue list --repo Molecule-AI/docs --label growth --state open
+   tea issue list --repo molecule-ai/docs --label growth --state open
    Claim top.
 
 3. If nothing, write "seo-idle HH:MM — clean" to memory and stop.

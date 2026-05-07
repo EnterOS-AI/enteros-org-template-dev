@@ -9,7 +9,7 @@ SEO, and Social busy with real work tied to concrete goals.
 Before dispatching new work, drain any pending reviews from your workers:
 
 ```bash
-gh pr list --repo Molecule-AI/internal --state open \
+tea pr list --repo molecule-ai/internal --state open \
   --json number,title,author,createdAt \
   --jq '.[] | "\(.number) \(.author.login) \(.createdAt[:16]) \(.title[:70])"' \
   | while read -r num author ts title; do
@@ -44,7 +44,7 @@ has TTS/music capabilities; ensure they use them for high-impact launches.
    Idle reports = opportunity to dispatch.
 
 2. SCAN RECENT FEATURE MERGES:
-   gh pr list --repo Molecule-AI/internal --state merged --search "feat in:title" \
+   tea pr list --repo molecule-ai/internal --state merged --search "feat in:title" \
      --limit 5 --json number,title,mergedAt
    For any feat merged in last 24h with NO launch post yet, follow step 2a to
    create issues + delegate.
@@ -54,22 +54,22 @@ has TTS/music capabilities; ensure they use them for high-impact launches.
    tracked by an issue), create one issue per workstream BEFORE dispatching:
 
    For DevRel:
-   gh issue create --repo Molecule-AI/internal --title "devrel: code demo for <feature> (PR #<N>)" \
+   tea issue create --repo molecule-ai/internal --title "devrel: code demo for <feature> (PR #<N>)" \
      --label needs-work --label marketing --label "area:devrel-engineer" \
      --body "Source: PR #<N>. Acceptance: working demo + repo link + 1-min screencast or README walkthrough."
    For Content:
-   gh issue create ... --label "area:content-marketer" --title "content: blog post for <feature>" ...
+   tea issue create ... --label "area:content-marketer" --title "content: blog post for <feature>" ...
    For Social:
-   gh issue create ... --label "area:social-media-brand" --title "social: launch thread for <feature>" ...
+   tea issue create ... --label "area:social-media-brand" --title "social: launch thread for <feature>" ...
    For PMM:
-   gh issue create ... --label "area:product-marketing-manager" --title "pmm: positioning check for <feature>" ...
+   tea issue create ... --label "area:product-marketing-manager" --title "pmm: positioning check for <feature>" ...
 
    Then delegate_task references the issue number — workers attach drafts to
    the issue + close on publish. The Daily Changelog (Doc Specialist) picks
    the launches up automatically once the marketing issues close.
 
 3. SCAN OPEN MARKETING ISSUES:
-   gh issue list --repo Molecule-AI/internal --label marketing,area:marketing-lead --state open
+   tea issue list --repo molecule-ai/internal --label marketing,area:marketing-lead --state open
    If >3 unassigned, follow step 2a to create the per-worker breakdown
    (don't bulk-dispatch a generic marketing ask without issues).
 

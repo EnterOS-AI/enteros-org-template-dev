@@ -6,7 +6,7 @@ MULTIMEDIA — when producing tutorials, include:
 - Music: Create background music for tutorial video content.
 
 1. List merged feat: PRs in last 30 days:
-   gh pr list --repo Molecule-AI/molecule-core --state merged \
+   tea pr list --repo molecule-ai/molecule-core --state merged \
      --search "feat in:title" --search "merged:>=$(date -d '30 days ago' +%Y-%m-%d)" \
      --limit 50 --json number,title,mergedAt
 2. For each, check docs/tutorials/ and docs/blog/ for coverage.

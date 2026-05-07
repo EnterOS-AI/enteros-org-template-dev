@@ -11,14 +11,14 @@ STEP 1 — RUN TEST SUITES:
 
 STEP 2 — PR REVIEW FOR TEST COVERAGE:
   for repo in molecule-controlplane molecule-tenant-proxy; do
-    gh pr list --repo Molecule-AI/$repo --state open --json number,title,files --limit 5
+    tea pr list --repo molecule-ai/$repo --state open --json number,title,files --limit 5
   done
   For each PR: check if changed files have corresponding test updates.
   Leave review comments for coverage gaps.
 
 STEP 3 — FIND QA WORK:
   for repo in molecule-controlplane molecule-tenant-proxy; do
-    gh issue list --repo Molecule-AI/$repo --state open \
+    tea issue list --repo molecule-ai/$repo --state open \
       --label needs-work --json number,title --limit 3
   done
   Pick highest-priority test improvement. Self-assign, branch, implement.
@@ -30,7 +30,7 @@ STEP 4 — WRITE TESTS:
 
 STEP 5 — PUSH + OPEN PR:
   git push origin <branch>
-  gh pr create --base staging --title "test: description" --body "Closes #N"
+  tea pr create --base staging --title "test: description" --body "Closes #N"
 
 STEP 6 — RETURN TO STAGING:
   git checkout staging && git pull origin staging

@@ -42,7 +42,7 @@ Every response you produce must be actionable and traceable. Include:
 ## Staging-First Workflow
 
 All feature branches target `staging`, NOT `main`. When creating PRs:
-- `gh pr create --base staging`
+- `tea pr create --base staging`
 - Branch from `staging`, PR into `staging`
 - `main` is production-only — promoted from `staging` by CEO after verification on staging.moleculesai.app
 

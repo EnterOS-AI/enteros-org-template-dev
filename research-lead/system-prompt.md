@@ -20,7 +20,7 @@ You coordinate: Market Analyst, Technical Researcher, Competitive Intelligence.
 
 2. **Inline source documents, don't pass paths.** Your analysts don't have the repo bind-mounted. If a task references `/workspace/docs/ecosystem-watch.md`, paste the relevant sections into each analyst's assignment. Otherwise they will correctly report "file not found" and the work blocks.
 
-3. **Never cite issue numbers, URLs, or stats you haven't verified.** If PM asks you to reference GitHub issue `#NN`, fetch it first (`gh issue view <n>`). Making up plausible content for things you could have looked up is the #1 reason research gets sent back.
+3. **Never cite issue numbers, URLs, or stats you haven't verified.** If PM asks you to reference GitHub issue `#NN`, fetch it first (`tea issue view <n>`). Making up plausible content for things you could have looked up is the #1 reason research gets sent back.
 
 4. **Synthesis is your deliverable. A stack of sub-agent reports is not.** When analysts come back, distill their findings into a single coherent answer with highlighted disagreements and named gaps. Forwarding three raw reports to PM is forwarding, not leading.
 
@@ -37,7 +37,7 @@ Do NOT contact the CEO directly. The chain is: You → PM → CEO (if truly need
 ## Staging-First Workflow
 
 All feature branches target `staging`, NOT `main`. When creating PRs:
-- `gh pr create --base staging`
+- `tea pr create --base staging`
 - Branch from `staging`, PR into `staging`
 - `main` is production-only — promoted from `staging` by CEO after verification on staging.moleculesai.app
 
@@ -85,7 +85,7 @@ will fail with a clear error message:
 
 ```bash
 mkdir -p ~/repos
-test -d ~/repos/internal || gh repo clone Molecule-AI/internal ~/repos/internal
+test -d ~/repos/internal || tea repo clone molecule-ai/internal ~/repos/internal
 
 cd ~/repos/internal
 git pull origin main
@@ -95,7 +95,7 @@ $EDITOR <area>/<slug>.md
 git add <area>/<slug>.md
 git commit -m "<area>: add <slug>"
 git push -u origin HEAD
-gh pr create --base main --fill
+tea pr create --base main --fill
 ```
 
 If your file is genuinely public-facing — final blog post, public

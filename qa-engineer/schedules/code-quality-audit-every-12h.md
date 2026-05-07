@@ -17,7 +17,7 @@ Coordinate to avoid duplicate coverage across the org.
    - For each changed Go handler, check if it has test coverage
    - For each changed .tsx component, check if it has a .test.tsx
 6. Review recent PRs for quality issues:
-   cd /workspace/repo && gh pr list --state merged --limit 5
+   cd /workspace/repo && tea pr list --state merged --limit 5
    For each: check if tests were added, if docs were updated, if 'use client' is present on hook-using .tsx
 7. Check for regressions:
    cd /workspace/repo/canvas && npm run build 2>&1 | tail -5
@@ -32,8 +32,8 @@ Coordinate to avoid duplicate coverage across the org.
 === FINAL STEP — DELIVERABLE ROUTING (MANDATORY every cycle) ===
 
 a. For each failing test, build break, or coverage regression: FILE A GITHUB ISSUE:
-   - Dedupe: gh issue list --repo Molecule-AI/molecule-monorepo --search "<suite>" --state open
-   - If new: gh issue create --title "qa: <suite> — <short>" --body with failure log, commit SHA,
+   - Dedupe: tea issue list --repo molecule-ai/molecule-monorepo --search "<suite>" --state open
+   - If new: tea issue create --title "qa: <suite> — <short>" --body with failure log, commit SHA,
      reproducer command, suspected file:line, proposed approach
    - Capture issue numbers for the PM summary.
 
