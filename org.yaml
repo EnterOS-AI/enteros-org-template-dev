@@ -114,16 +114,16 @@ defaults:
     from across the org based on your role.
 
     1. Clone the baseline repo (molecule-core conventions are the org standard).
-       Authenticated when GITHUB_TOKEN is available, anonymous otherwise. When a token
+       Authenticated when GITEA_TOKEN is available, anonymous otherwise. When a token
        is present, use it in-URL ONLY for the clone, then scrub the remote URL so the
        token is never persisted to /workspace/repos/molecule-core/.git/config:
        mkdir -p /workspace/repos
-       if [ -n "$GITHUB_TOKEN" ]; then
-         git clone "https://x-access-token:${GITHUB_TOKEN}@github.com/Molecule-AI/molecule-core.git" /workspace/repos/molecule-core 2>/dev/null \
-           && (cd /workspace/repos/molecule-core && git remote set-url origin "https://github.com/Molecule-AI/molecule-core.git") \
+       if [ -n "$GITEA_TOKEN" ]; then
+         git clone "https://x-access-token:${GITEA_TOKEN}@git.moleculesai.app/molecule-ai/molecule-core.git" /workspace/repos/molecule-core 2>/dev/null \
+           && (cd /workspace/repos/molecule-core && git remote set-url origin "https://git.moleculesai.app/molecule-ai/molecule-core.git") \
            || (cd /workspace/repos/molecule-core && git pull)
        else
-         git clone "https://github.com/Molecule-AI/molecule-core.git" /workspace/repos/molecule-core 2>/dev/null || (cd /workspace/repos/molecule-core && git pull)
+         git clone "https://git.moleculesai.app/molecule-ai/molecule-core.git" /workspace/repos/molecule-core 2>/dev/null || (cd /workspace/repos/molecule-core && git pull)
        fi
        # Backwards-compat symlink — older role prompts still reference /workspace/repo
        ln -sfn /workspace/repos/molecule-core /workspace/repo

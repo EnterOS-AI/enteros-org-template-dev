@@ -20,7 +20,7 @@ tea issue list --repo molecule-ai/landingpage --state open --json number,title
 ## Step 4: Act
 If you find something to fix: clone the repo, create a branch, fix it, push, open PR.
 ```bash
-git clone https://x-access-token:${GITHUB_TOKEN}@github.com/Molecule-AI/landingpage.git /workspace/repos/landingpage 2>/dev/null || (cd /workspace/repos/landingpage && git pull)
+git clone https://x-access-token:${GITEA_TOKEN}@git.moleculesai.app/molecule-ai/landingpage.git /workspace/repos/landingpage 2>/dev/null || (cd /workspace/repos/landingpage && git pull)
 ```
 
 ## Step 5: Report
