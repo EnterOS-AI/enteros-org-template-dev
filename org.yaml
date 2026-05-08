@@ -151,11 +151,11 @@ workspaces:
   # Platform fetches molecule-ai/molecule-dev-department at import time into a
   # content-addressable cache under <orgBaseDir>/.external-cache/. No operator-
   # side filesystem symlink, no sibling-clone deploy contract — the import is
-  # self-contained. To pin a specific tag/SHA in production, change `ref: main`
-  # below (e.g. `ref: v1.0.0`).
+  # self-contained. Pinned to v1.0.0 (first stable atomized release;
+  # see molecule-ai/molecule-dev-department tags for newer versions).
   - !external
     repo: molecule-ai/molecule-dev-department
-    ref: main
+    ref: v1.0.0
     path: dev-lead/workspace.yaml
 
 template_schema_version: 1
