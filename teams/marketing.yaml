@@ -16,7 +16,9 @@ schedules:
     enabled: true
     prompt_file: schedules/orchestrator-pulse.md
 children:
-  - !include ../devrel-engineer/workspace.yaml
+  # devrel-engineer was an orphan in parent (no body files); deleted
+  # during Phase 3d slim. If marketing needs a DevRel role going forward,
+  # it can be re-added here as a fresh workspace folder.
   - !include ../product-marketing-manager/workspace.yaml
   - !include ../content-marketer/workspace.yaml
   - !include ../community-manager/workspace.yaml

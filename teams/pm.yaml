@@ -22,8 +22,10 @@ schedules:
     prompt_file: schedules/orchestrator-pulse.md
 children:
   - !include research.yaml
-  - !include dev.yaml
-  - !include documentation-specialist.yaml
-  - !include triage-operator.yaml
-  - !include ../triage-operator-2/workspace.yaml
+  # Dev tree extracted to molecule-ai/molecule-dev-department (internal#77).
+  # Dev Lead is now a top-level workspace in org.yaml `workspaces:`,
+  # composed via the `dev-lead` symlink at template root.
+  # Documentation Specialist + Triage Operator moved into the dev tree
+  # (Hongming Q1+Q2): doc-spec under dev-lead/app-lead, triage-op as
+  # direct dev-lead child. The orphan triage-operator-2 was deleted.
 initial_prompt_file: initial-prompt.md
