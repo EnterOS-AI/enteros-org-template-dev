@@ -147,5 +147,10 @@ defaults:
 workspaces:
   - !include teams/pm.yaml
   - !include teams/marketing.yaml
+  # Dev tree extracted to molecule-ai/molecule-dev-department (internal#77).
+  # The `dev-lead` symlink at this template's root resolves through the
+  # operator-side sibling-clone convention to molecule-dev-department/dev-lead/.
+  # See README §Dev tree composition for the deploy invariant.
+  - !include dev-lead/workspace.yaml
 
 template_schema_version: 1
