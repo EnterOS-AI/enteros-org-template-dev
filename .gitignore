@@ -19,3 +19,6 @@
 # Workspace auth tokens
 .auth-token
 .auth_token
+
+# Platform .external-cache/ (cross-repo subtree fetch cache, see internal#77)
+.external-cache/
