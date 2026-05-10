@@ -130,7 +130,7 @@ defaults:
 
     2. Enumerate the org so you know what's out there. Don't clone everything (wasteful);
        memorise the inventory and clone-on-demand when a task touches a specific repo:
-         curl -fsS -H "Authorization: token ${GITEA_TOKEN}" \n           "https://git.moleculesai.app/api/v1/orgs/molecule-ai/repos?limit=60" \n           > /workspace/org-repos.json 2>/dev/null || true
+         curl -fsS -H "Authorization: token ${GITEA_TOKEN}" "https://git.moleculesai.app/api/v1/orgs/molecule-ai/repos?limit=60" > /workspace/org-repos.json 2>/dev/null || true
        Use commit_memory with key `org-repos-inventory` to save the repo list +
        brief description for each. Re-enumerate on every restart so you stay current
        with new repos.
