@@ -6,7 +6,7 @@ name: CI
 #
 # Root cause of the main-red CI on this repo:
 #   The .github/ original used
-#     uses: molecule-ai/molecule-ci/.github/workflows/validate-org-template.yml@main
+#     uses: molecule-ai/molecule-ci/.gitea/workflows/validate-org-template.yml@main
 #   which Gitea 1.22.6 rejects (DEFAULT_ACTIONS_URL=github → 404 against
 #   the remote repo even though it lives on the same Gitea instance).
 #   Gitea reads .github/ as a fallback when .gitea/ is absent
@@ -31,7 +31,7 @@ name: CI
 #
 # Cross-links:
 #   - internal#326 — parent tracking issue
-#   - molecule-ai/molecule-ci/.github/workflows/validate-org-template.yml — pattern source
+#   - molecule-ai/molecule-ci/.gitea/workflows/validate-org-template.yml — pattern source
 
 on: [push, pull_request]
 
@@ -44,7 +44,7 @@ permissions:
   contents: read
 
 jobs:
-  validate:
+  org-template-validation:
     name: Org template validation
     runs-on: ubuntu-latest
     timeout-minutes: 10
@@ -111,3 +111,17 @@ jobs:
           else:
               print("::notice::No secrets detected")
           PYEOF
+
+  validate:
+    name: validate
+    runs-on: ubuntu-latest
+    needs: org-template-validation
+    steps:
+      - name: Assert required checks passed
+        run: |
+          result="${{ needs.org-template-validation.result }}"
+          echo "org-template-validation: $result"
+          if [ "$result" != "success" ]; then
+            echo "::error::Org template validation did not succeed: $result"
+            exit 1
+          fi
