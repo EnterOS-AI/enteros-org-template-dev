@@ -9,7 +9,7 @@ Research cycle with web search. Run every 30 minutes.
      --json number,title --limit 5
 
 2. WEB SEARCH — for active research questions, use web_search to gather current info:
-   - AI agent framework releases (LangChain, CrewAI, AutoGen, Swarm, etc.)
+   - AI agent framework releases (LangChain, AutoGen, Swarm, etc.)
    - MCP server ecosystem updates (new servers, protocol changes)
    - Claude/Anthropic SDK updates, OpenAI API changes
    - Relevant GitHub trending repos in ai-agents topic
