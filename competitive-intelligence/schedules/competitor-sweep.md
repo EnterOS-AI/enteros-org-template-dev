@@ -13,7 +13,6 @@ Competitor sweep with web search. Run every 30 minutes.
    - Letta (MemGPT): framework updates, enterprise offerings
    - n8n: AI agent features, marketplace
    - LangChain/LangSmith: platform evolution
-   - CrewAI: enterprise features, integrations
    - Other emerging AI agent platforms
 
 3. COMPETITIVE MATRIX UPDATE:
