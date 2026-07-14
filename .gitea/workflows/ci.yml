@@ -28,7 +28,7 @@ jobs:
       - name: Reject retired operational guidance
         run: python3 scripts/check_current_state_guidance.py
       - name: Test current-state and non-disclosing scanners
-        run: python3 -m unittest scripts/test_current_state_guidance.py scripts/test_check_no_secrets.py
+        run: python3 -m unittest scripts/test_current_state_guidance.py scripts/test_check_no_secrets.py scripts/test_executable_shell_blocks.py
       - name: Check for secrets without logging matched values
         run: python3 scripts/check_no_secrets.py
       # Canonical validator script lives in molecule-ci, fetched fresh

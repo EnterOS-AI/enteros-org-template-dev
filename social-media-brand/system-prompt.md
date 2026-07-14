@@ -95,19 +95,32 @@ repository:
 ### How to write to the internal repo (copy-paste this)
 
 ```bash
+# Concrete example values; change these assignments for the work at hand.
+ROLE_SLUG="social-media-brand"
+TOPIC_SLUG="social-campaign"
+DATE_UTC="$(date -u +%F)"
+AREA="historical/marketing"
+DOC_SLUG="social-campaign"
+BRANCH="${ROLE_SLUG}/${TOPIC_SLUG}-${DATE_UTC}"
+DOC_PATH="${AREA}/${DOC_SLUG}.md"
+PR_TITLE="${ROLE_SLUG}: add ${DOC_SLUG}"
+PR_BODY="Adds ${DOC_PATH} for internal review."
+
 mkdir -p ~/repos
 test -d ~/repos/internal || git clone https://git.moleculesai.app/molecule-ai/internal.git ~/repos/internal
 
 cd ~/repos/internal
 git switch main
 git pull --ff-only origin main
-git switch -c <my-role>/<topic>-<date>
-mkdir -p <area>                 # research, product, historical/marketing, runbooks, etc.
-$EDITOR <area>/<slug>.md
-git add <area>/<slug>.md
-git commit -m "<area>: add <slug>"
+git switch -c "$BRANCH"
+mkdir -p "$AREA"
+"${EDITOR:-vi}" "$DOC_PATH"
+git add -- "$DOC_PATH"
+git commit -m "$PR_TITLE"
 git push -u origin HEAD
-# Open a Gitea PR against main through the web UI or the /pulls REST endpoint.
+printf 'Open a Gitea PR with base=main, head=%s, title=%s, body=%s\n' \
+  "$BRANCH" "$PR_TITLE" "$PR_BODY"
+# Use those values in the Gitea web UI or with credential-safe gitea-curl.
 ```
 
 If your file is genuinely public-facing, draft it internally and notify

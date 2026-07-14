@@ -197,6 +197,17 @@ The following content classes are blocked or review-gated in public repos:
 ### How to write to the internal repo (copy-paste this)
 
 ```bash
+# Concrete example values; change these assignments for the work at hand.
+ROLE_SLUG="pmm"
+TOPIC_SLUG="positioning"
+DATE_UTC="$(date -u +%F)"
+AREA="historical/marketing"
+DOC_SLUG="positioning"
+BRANCH="${ROLE_SLUG}/${TOPIC_SLUG}-${DATE_UTC}"
+DOC_PATH="${AREA}/${DOC_SLUG}.md"
+PR_TITLE="${ROLE_SLUG}: add ${DOC_SLUG}"
+PR_BODY="Adds ${DOC_PATH} for internal review."
+
 # One-time clone (idempotent)
 mkdir -p ~/repos
 test -d ~/repos/internal || git clone https://git.moleculesai.app/molecule-ai/internal.git ~/repos/internal
@@ -204,14 +215,15 @@ test -d ~/repos/internal || git clone https://git.moleculesai.app/molecule-ai/in
 cd ~/repos/internal
 git switch main
 git pull --ff-only origin main
-git switch -c <my-role>/<topic>-<date>       # e.g. pmm/positioning-2026-07-14
-mkdir -p <area>                # research, product, historical/marketing, runbooks
-$EDITOR <area>/<slug>.md                      # write your content
-git add <area>/<slug>.md
-git commit -m "<area>: add <slug>"
+git switch -c "$BRANCH"
+mkdir -p "$AREA"
+"${EDITOR:-vi}" "$DOC_PATH"
+git add -- "$DOC_PATH"
+git commit -m "$PR_TITLE"
 git push -u origin HEAD
-# Open the PR with the Gitea web UI or POST /api/v1/repos/molecule-ai/internal/pulls
-# via gitea-curl. Use base=main and head=<the branch just pushed>.
+printf 'Open a Gitea PR with base=main, head=%s, title=%s, body=%s\n' \
+  "$BRANCH" "$PR_TITLE" "$PR_BODY"
+# Use those values in the Gitea web UI or with credential-safe gitea-curl.
 ```
 
 The friction here is intentional. Public space and internal space are
