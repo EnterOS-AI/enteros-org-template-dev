@@ -75,6 +75,19 @@ FORBIDDEN = {
     ),
     "unconfigured molecule-hitl tool": re.compile(r"\bmolecule-hitl\b"),
 }
+UNDELIVERED_ROLE = re.compile(
+    r"\b(?:technical-writer|documentation-specialist|"
+    r"app-docs-lead|research-analyst)\b",
+    re.IGNORECASE,
+)
+HISTORICAL_COMMENT = re.compile(
+    r"\b(?:former|historical|legacy|moved|orphan(?:ed)?|removed|retired)\b",
+    re.IGNORECASE,
+)
+
+
+def is_clearly_historical_comment(line: str) -> bool:
+    return line.lstrip().startswith("#") and HISTORICAL_COMMENT.search(line) is not None
 
 
 def iter_guidance_files(root: Path) -> list[Path]:
@@ -98,6 +111,10 @@ def scan(root: Path) -> list[str]:
             findings.append(f"{relative}:0:unreadable guidance file")
             continue
         for line_number, line in enumerate(text.splitlines(), 1):
+            if UNDELIVERED_ROLE.search(line) and not is_clearly_historical_comment(line):
+                findings.append(
+                    f"{relative}:{line_number}:undelivered active role name"
+                )
             for label, pattern in FORBIDDEN.items():
                 if pattern.search(line):
                     findings.append(f"{relative}:{line_number}:{label}")

@@ -460,8 +460,6 @@ devops/uiux) — those ship directly to `molecule-core`/`molecule-app`/
 | Role | Output lands in (eventually) |
 |---|---|
 | `content-marketer` | Blog posts, tutorials → `molecule-ai/docs` |
-| `technical-writer` | Reference docs, API guides → `molecule-ai/docs` |
-| `documentation-specialist` | Runbooks, internal SOPs → `molecule-ai/docs` (if public) |
 | `seo-growth-analyst` | SEO briefs, keyword pages → `molecule-ai/docs` + `landingpage` |
 | `social-media-brand` | Social copy, campaign assets (draft) |
 | `community-manager` | Community replies, FAQ updates |
@@ -476,8 +474,9 @@ devops/uiux) — those ship directly to `molecule-core`/`molecule-app`/
    at the path selected by its current `DOCUMENTATION_POLICY.md` (for example,
    `research/`, `product/`, or `historical/marketing/`).
 2. **Worker pings their lead** via A2A delegation or the PR comment
-   naming the lead. Example: content-marketer → marketing-lead,
-   technical-writer → app-docs-lead, research-analyst → research-lead.
+   naming the lead. Examples: content-marketer → marketing-lead,
+   product-marketing-manager → marketing-lead, and technical-researcher →
+   research-lead.
 3. **Lead reviews** the internal PR. If the content is on-brand and
    public-ready, the lead **opens a mirror PR on the public target
    repo** (`docs` / `landingpage`) copying the approved content.
@@ -498,7 +497,7 @@ devops/uiux) — those ship directly to `molecule-core`/`molecule-app`/
 - **Public-repository content guards** remain a last-resort backstop for the
   rare case a worker misroutes internal material.
 
-### Lead responsibility (marketing-lead, research-lead, app-docs-lead, PMM)
+### Lead responsibility (marketing-lead and research-lead)
 
 Your idle-prompt cron should include a step:
 

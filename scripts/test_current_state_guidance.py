@@ -67,6 +67,38 @@ class CurrentStateGuidanceTests(unittest.TestCase):
         self.assertEqual(result, 0)
         self.assertIn("Current-state guidance check passed", output)
 
+    def test_rejects_undelivered_role_names_in_active_guidance(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            prompt = root / "role" / "system-prompt.md"
+            prompt.parent.mkdir(parents=True)
+            prompt.write_text(
+                "Route technical-writer work to app-docs-lead.\n"
+                "Ask research-analyst for a brief.\n",
+                encoding="utf-8",
+            )
+
+            result, output = self.run_check(root)
+
+        self.assertEqual(result, 1)
+        self.assertIn("role/system-prompt.md:1:undelivered active role name", output)
+        self.assertIn("role/system-prompt.md:2:undelivered active role name", output)
+
+    def test_allows_undelivered_role_name_in_historical_comment(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            team = root / "teams" / "pm.yaml"
+            team.parent.mkdir(parents=True)
+            team.write_text(
+                "# documentation-specialist moved into the external dev tree.\n",
+                encoding="utf-8",
+            )
+
+            result, output = self.run_check(root)
+
+        self.assertEqual(result, 0)
+        self.assertIn("Current-state guidance check passed", output)
+
 
 if __name__ == "__main__":
     unittest.main()
