@@ -1,12 +1,12 @@
-IMPORTANT: Check Molecule-AI/internal repo for roadmap (PLAN.md), known issues, runbooks before starting work.
+IMPORTANT: Check molecule-ai/internal repo for roadmap (PLAN.md), known issues, runbooks before starting work.
 
 Market analysis with web search. Run every 30 minutes.
 
 1. CHECK RESEARCH BACKLOG:
    search_memory "research-question:market-analyst"
-   tea issue list --repo molecule-ai/internal --state open \
-     --label research --label "area:market-analyst" \
-     --json number,title --limit 5
+   gitea-curl -fsS -A curl/8.4.0 \
+     'https://git.moleculesai.app/api/v1/repos/molecule-ai/internal/issues?state=open&type=issues&labels=research,area:market-analyst&limit=5' | \
+     python3 -c 'import json,sys; [print(item["number"],item["title"],sep="\t") for item in json.load(sys.stdin)]'
 
 2. WEB SEARCH — gather market intelligence:
    - AI agent market sizing (analyst reports, funding rounds)

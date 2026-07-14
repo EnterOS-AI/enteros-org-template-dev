@@ -1,12 +1,12 @@
-IMPORTANT: Check Molecule-AI/internal repo for roadmap (PLAN.md), known issues, runbooks before starting work.
+IMPORTANT: Check molecule-ai/internal repo for roadmap (PLAN.md), known issues, runbooks before starting work.
 
 Competitor sweep with web search. Run every 30 minutes.
 
 1. CHECK RESEARCH BACKLOG:
    search_memory "research-question:competitive-intelligence"
-   tea issue list --repo molecule-ai/internal --state open \
-     --label research --label "area:competitive-intelligence" \
-     --json number,title --limit 5
+   gitea-curl -fsS -A curl/8.4.0 \
+     'https://git.moleculesai.app/api/v1/repos/molecule-ai/internal/issues?state=open&type=issues&labels=research,area:competitive-intelligence&limit=5' | \
+     python3 -c 'import json,sys; [print(item["number"],item["title"],sep="\t") for item in json.load(sys.stdin)]'
 
 2. WEB SEARCH — scan competitors for changes:
    - Hermes Agent: new releases, pricing, features
@@ -16,7 +16,8 @@ Competitor sweep with web search. Run every 30 minutes.
    - Other emerging AI agent platforms
 
 3. COMPETITIVE MATRIX UPDATE:
-   Compare findings against docs/marketing/competitors.md.
+   Compare findings against the private competitor matrix located through
+   `molecule-ai/internal` repository search.
    If competitor shape/pricing/differentiation changed, flag to PMM + Marketing Lead.
 
 4. THREAT ANALYSIS:

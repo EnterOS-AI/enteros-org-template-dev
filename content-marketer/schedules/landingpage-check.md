@@ -1,10 +1,10 @@
-Landing page health check. You co-own Molecule-AI/landingpage with SEO Analyst.
+Landing page health check. You co-own molecule-ai/landingpage with SEO Analyst.
 
 ## Step 1: Check repo activity
 ```bash
-tea repo view molecule-ai/landingpage --json updatedAt,defaultBranchRef
-tea pr list --repo molecule-ai/landingpage --state open --json number,title,author
-tea issue list --repo molecule-ai/landingpage --state open --json number,title
+gitea-curl -fsS -A curl/8.4.0 https://git.moleculesai.app/api/v1/repos/molecule-ai/landingpage | python3 -c 'import json,sys; data=json.load(sys.stdin); print(json.dumps({key:data.get(key) for key in ("updated_at","default_branch")},indent=2))'
+gitea-curl -fsS -A curl/8.4.0 'https://git.moleculesai.app/api/v1/repos/molecule-ai/landingpage/pulls?state=open&limit=50' | python3 -c 'import json,sys; [print(item["number"],item["title"],item["user"]["login"],sep="\t") for item in json.load(sys.stdin)]'
+gitea-curl -fsS -A curl/8.4.0 'https://git.moleculesai.app/api/v1/repos/molecule-ai/landingpage/issues?state=open&type=issues&limit=50' | python3 -c 'import json,sys; [print(item["number"],item["title"],sep="\t") for item in json.load(sys.stdin)]'
 ```
 
 ## Step 2: Check for issues
@@ -18,9 +18,11 @@ tea issue list --repo molecule-ai/landingpage --state open --json number,title
 - Is the Chinese translation (zh/) in sync with English?
 
 ## Step 4: Act
-If you find something to fix: clone the repo, create a branch, fix it, push, open PR.
+Clone the repo for inspection when needed. If you find a content change, draft
+it through `molecule-ai/internal` and notify Marketing Lead; the lead owns the
+public `landingpage` mirror PR.
 ```bash
-git clone https://x-access-token:${GITEA_TOKEN}@git.moleculesai.app/molecule-ai/landingpage.git /workspace/repos/landingpage 2>/dev/null || (cd /workspace/repos/landingpage && git pull)
+git clone https://git.moleculesai.app/molecule-ai/landingpage.git /workspace/repos/landingpage 2>/dev/null || (cd /workspace/repos/landingpage && git pull --ff-only)
 ```
 
 ## Step 5: Report

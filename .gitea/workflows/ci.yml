@@ -1,43 +1,18 @@
 name: CI
 
-# Ported from .github/workflows/ci.yml on 2026-05-11 per internal#326
-# (Class-A root: cross-repo `uses:` blocker for Gitea 1.22.6 —
-# feedback_gitea_cross_repo_uses_blocked).
+# Keep validation steps local to this job. On current Gitea, a cross-repository
+# reusable-workflow reference can be recorded as successful without executing
+# its steps. This job therefore fetches molecule-ci's canonical scripts over
+# HTTPS and runs them directly. The `GITHUB_*` names below are Gitea Actions
+# compatibility variables; canonical SCM remains git.moleculesai.app.
 #
-# Root cause of the main-red CI on this repo:
-#   The .github/ original used
-#     uses: molecule-ai/molecule-ci/.gitea/workflows/validate-org-template.yml@main
-#   which Gitea 1.22.6 rejects (DEFAULT_ACTIONS_URL=github → 404 against
-#   the remote repo even though it lives on the same Gitea instance).
-#   Gitea reads .github/ as a fallback when .gitea/ is absent
-#   (reference_per_repo_gitea_vs_github_actions_dir), so the .github/
-#   workflow was firing on Gitea and failing in 1s.
-#
-# Fix shape: inline the validation logic directly. The canonical
-# validator in molecule-ai/molecule-ci already self-clones into the
-# runner via a direct HTTPS `git clone` step (validate-org-template.yml
-# does this verbatim) — so the inline port is just "do that clone +
-# invoke the validator script in-place", preserving the
-# single-source-of-truth property.
-#
-# Four-surface migration audit (feedback_gitea_actions_migration_audit_pattern):
-#   1. YAML — no `workflow_dispatch.inputs`; no `merge_group`; preserved
-#      `on: [push, pull_request]` from the original. Added workflow-level
-#      env.GITHUB_SERVER_URL (feedback_act_runner_github_server_url).
-#   2. Cache — `actions/setup-python` `cache: pip` preserved.
-#   3. Token — uses auto-injected GITHUB_TOKEN; validator needs only
-#      `contents: read` (no write).
-#   4. Docs — anonymous git-clone of molecule-ci.
-#
-# Cross-links:
-#   - internal#326 — parent tracking issue
-#   - molecule-ai/molecule-ci/.gitea/workflows/validate-org-template.yml — pattern source
+# Canonical validator source:
+# molecule-ai/molecule-ci/.gitea/workflows/validate-org-template.yml
 
 on: [push, pull_request]
 
 env:
-  # Belt-and-suspenders against the runner-default trap
-  # (feedback_act_runner_github_server_url).
+  # Pin the Gitea Actions compatibility variable to canonical SCM.
   GITHUB_SERVER_URL: https://git.moleculesai.app
 
 permissions:
@@ -50,6 +25,12 @@ jobs:
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - name: Reject retired operational guidance
+        run: python3 scripts/check_current_state_guidance.py
+      - name: Test current-state and non-disclosing scanners
+        run: python3 -m unittest scripts/test_current_state_guidance.py scripts/test_check_no_secrets.py
+      - name: Check for secrets without logging matched values
+        run: python3 scripts/check_no_secrets.py
       # Canonical validator script lives in molecule-ci, fetched fresh
       # on every run. Anonymous fetch of the public molecule-ci repo —
       # no token needed; no actions/checkout cross-repo idiosyncrasies.
@@ -61,56 +42,14 @@ jobs:
           cache: "pip"
           cache-dependency-path: .molecule-ci-canonical/.molecule-ci/scripts/requirements.txt
       - run: pip install pyyaml jsonschema -q
-      - run: python3 .molecule-ci-canonical/.molecule-ci/scripts/validate-org-template.py
-      - name: Check for secrets
+      - name: Test and enforce native-channel allowlists
         run: |
-          python3 - << 'PYEOF'
-          import os, re, sys
-          from pathlib import Path
-
-          PATTERNS = [
-              re.compile(r'''["']sk-ant-[a-zA-Z0-9]{50,}["']'''),
-              re.compile(r'''["']ghp_[a-zA-Z0-9]{36,}["']'''),
-              re.compile(r'''["']AKIA[A-Z0-9]{16}["']'''),
-              re.compile(r'''["'][a-zA-Z0-9/+=]{40}["']'''),
-              re.compile(r'''["']sk_test_[a-zA-Z0-9]{24,}["']'''),
-              re.compile(r'''["']Bearer\s+[a-zA-Z0-9_.-]{20,}["']'''),
-              re.compile(r'''ghp_[a-zA-Z0-9]{36,}'''),
-              re.compile(r'''sk-ant-[a-zA-Z0-9]{50,}'''),
-          ]
-          SKIP_DIRS = {'.molecule-ci', '.molecule-ci-canonical', '.git', 'node_modules', '__pycache__'}
-          EXTENSIONS = {'.yaml', '.yml', '.md', '.py', '.sh'}
-
-          def is_false_positive(line):
-              ctx = line.lower()
-              return '...' in ctx or '<example' in ctx or '</example' in ctx
-
-          root = Path(os.environ.get('GITHUB_WORKSPACE', '.'))
-          warnings = []
-          for dirpath, dirnames, filenames in os.walk(root):
-              dirnames[:] = [d for d in dirnames if d not in SKIP_DIRS]
-              for filename in filenames:
-                  if Path(filename).suffix not in EXTENSIONS:
-                      continue
-                  filepath = Path(dirpath) / filename
-                  try:
-                      with open(filepath, 'r', encoding='utf-8', errors='ignore') as f:
-                          for lineno, line in enumerate(f.readlines(), 1):
-                              for pattern in PATTERNS:
-                                  for match in pattern.finditer(line):
-                                      if not is_false_positive(line):
-                                          warnings.append(f"  {filepath}:{lineno}: {match.group(0)[:40]}...")
-                  except Exception:
-                      pass
-
-          if warnings:
-              print("::error::Potential secret found in committed files:")
-              for w in warnings:
-                  print(w)
-              sys.exit(1)
-          else:
-              print("::notice::No secrets detected")
-          PYEOF
+          python3 -m unittest scripts/test_channel_allowlists.py
+          python3 scripts/check_channel_allowlists.py
+      - name: Validate template shape
+        run: |
+          python3 .molecule-ci/scripts/validate-org-template.py
+          python3 .molecule-ci-canonical/.molecule-ci/scripts/validate-org-template.py
 
   validate:
     name: validate

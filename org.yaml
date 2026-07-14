@@ -7,7 +7,8 @@ defaults:
   tier: 2
   # required_env removed — PR #1031 eliminated the CLAUDE_CODE_OAUTH_TOKEN
   # requirement; workspaces authenticate via the platform token flow.
-  # ANTHROPIC_API_KEY is set via workspace .env, not as a required_env constraint.
+  # Optional BYOK values belong in a workspace .env only when its selected
+  # runtime/model declares them; they are not a template-wide requirement.
 
   # Default plugin set applied to every workspace. Per-workspace `plugins:`
   # UNIONs with this set (#71). Use just the additions; prefix `!` (or `-`)
@@ -40,12 +41,14 @@ defaults:
     - molecule-skill-cron-learnings
     - molecule-skill-update-docs
 
-  # Audit-summary routing — generic per-template mapping (issue #51).
+  # Audit-summary routing — generic per-template mapping.
   # Auditors (Security Auditor, UIUX Designer, QA Engineer) send A2A messages
   # with metadata.audit_summary.category set. The receiver (PM) reads this
   # table from its own /configs/config.yaml and delegates to each listed role.
-  # Each org template owns its own mapping — role names are NOT hardcoded in
-  # prompts, so adding/renaming roles is a config-only change.
+  # Known operational defect: several legacy target names below do not resolve
+  # in the current org composed with molecule-dev-department@v1.0.0. The full,
+  # owner-approved remap plus importer validation is tracked in
+  # molecule-ai/internal#1008. Do not treat an unresolved target as delivery.
   category_routing:
     # Defensive findings — code review, SAST, missing patch class.
     security: [Backend Engineer, Backend Engineer 2, Backend Engineer 3, DevOps Engineer]
@@ -58,16 +61,16 @@ defaults:
     ui: [Frontend Engineer, Frontend Engineer 2, Frontend Engineer 3]
     ux: [Frontend Engineer, Frontend Engineer 2]
     infra: [DevOps Engineer, Platform Engineer, SRE Engineer]
-    # Cloud-services findings (Vercel/Fly/GHCR/Upptime) — failed deploy,
-    # broken health check, expired cert, increased error rate, runaway
-    # cost. Routed to DevOps first (operate the platform) and Backend
-    # second (most cloud regressions trace back to a backend deploy).
+    # Hosted-service findings — failed release, broken health check, expired
+    # certificate, increased error rate, or runaway cost. Route to DevOps
+    # first (operate the platform) and Backend second (many service regressions
+    # trace back to an application change).
     cloud: [DevOps Engineer, Platform Engineer, SRE Engineer, Backend Engineer]
     qa: [QA Engineer, QA Engineer 2, QA Engineer 3]
     performance: [Backend Engineer]
     docs: [Documentation Specialist]
     mixed: [Dev Lead]
-    # Evolution-cron categories (#93): these four are fired by hourly
+    # Evolution-cron categories: these four are fired by hourly
     # self-review schedules (Research Lead, Technical Researcher, Dev Lead,
     # DevOps Engineer). Routing them to the same role that generated them
     # is a safe default — it converts the summary into a delegation back
@@ -77,10 +80,8 @@ defaults:
     plugins: [Technical Researcher]
     template: [Dev Lead]
     channels: [DevOps Engineer]
-    # Marketing team categories (2026-04-16). Peer sub-tree under CEO —
-    # reports via Marketing Lead for coordination + cross-functional
-    # delegations into the dev team (DevRel → Backend Engineer for code
-    # samples, PMM → Competitive Intelligence for eco-watch diffs).
+    # Marketing team categories. The legacy devrel target is also covered by
+    # the complete routing repair tracked in molecule-ai/internal#1008.
     content: [Content Marketer]
     positioning: [Product Marketing Manager]
     community: [Community Manager]
@@ -101,57 +102,63 @@ defaults:
   idle_interval_seconds: 600   # 10 min — ignored when idle_prompt is empty
 
   # initial_prompt runs once on first boot (not on restart).
-  # Molecule-AI/molecule-core is a container env var from .env secrets.
+  # molecule-core is the public baseline repository cloned during first boot.
   # IMPORTANT: Do NOT send A2A messages in initial_prompt — other agents may not
   # be ready yet. Keep it local: clone, read, memorize. Wait for tasks.
   initial_prompt: |
     You just started. Set up your environment silently — do NOT contact other agents yet.
-    SCOPE: this team owns the entire molecule-ai org on Gitea (git.moleculesai.app) (40+ repos: molecule-core,
-    molecule-app, docs, landingpage, all plugin/template/sdk repos) AND the live cloud
-    services that run them (Vercel for app + landingpage, Railway for control plane, AWS ECR
-    for images, Upptime for status). Do NOT scope yourselves to molecule-core only —
-    issues, PRs, and incidents from any molecule-ai/* repo are in scope. Pick up work
-    from across the org based on your role.
+    SCOPE: this team owns the entire molecule-ai org on Gitea
+    (https://git.moleculesai.app/molecule-ai), including molecule-core, molecule-app,
+    docs, landingpage, and all plugin/template/SDK repositories, plus the live services
+    reached through moleculesai.app domains. Do NOT scope yourselves to molecule-core
+    only. Repository counts and deployment paths change: enumerate Gitea, then read the
+    target repository's instructions and checked-in .gitea/workflows before acting.
 
-    1. Clone the baseline repo (molecule-core conventions are the org standard).
-       Authenticated when GITEA_TOKEN is available, anonymous otherwise. When a token
-       is present, use it in-URL ONLY for the clone, then scrub the remote URL so the
-       token is never persisted to /workspace/repos/molecule-core/.git/config:
+    1. Clone the public baseline repo without embedding credentials in its URL:
        mkdir -p /workspace/repos
-       if [ -n "$GITEA_TOKEN" ]; then
-         git clone "https://x-access-token:${GITEA_TOKEN}@git.moleculesai.app/molecule-ai/molecule-core.git" /workspace/repos/molecule-core 2>/dev/null \
-           && (cd /workspace/repos/molecule-core && git remote set-url origin "https://git.moleculesai.app/molecule-ai/molecule-core.git") \
-           || (cd /workspace/repos/molecule-core && git pull)
-       else
-         git clone "https://git.moleculesai.app/molecule-ai/molecule-core.git" /workspace/repos/molecule-core 2>/dev/null || (cd /workspace/repos/molecule-core && git pull)
-       fi
+       git clone "https://git.moleculesai.app/molecule-ai/molecule-core.git" /workspace/repos/molecule-core 2>/dev/null \
+         || (cd /workspace/repos/molecule-core && git pull --ff-only)
        # Backwards-compat symlink — older role prompts still reference /workspace/repo
        ln -sfn /workspace/repos/molecule-core /workspace/repo
 
-    2. Enumerate the org so you know what's out there. Don't clone everything (wasteful);
-       memorise the inventory and clone-on-demand when a task touches a specific repo:
-         curl -fsS -H "Authorization: token ${GITEA_TOKEN}" "https://git.moleculesai.app/api/v1/orgs/molecule-ai/repos?limit=60" > /workspace/org-repos.json 2>/dev/null || true
+    2. Enumerate every Gitea page so you know what's out there. Don't clone everything;
+       save the inventory and clone on demand when a task touches a specific repo:
+         : > /workspace/org-repos.jsonl
+         page=1
+         while true; do
+           payload=$(gitea-curl -fsS -A curl/8.4.0 \
+             "https://git.moleculesai.app/api/v1/orgs/molecule-ai/repos?page=${page}&limit=50") || break
+           count=$(printf '%s' "$payload" | python3 -c 'import json,sys; print(len(json.load(sys.stdin)))')
+           [ "$count" -eq 0 ] && break
+           printf '%s' "$payload" | python3 -c 'import json,sys; [print(json.dumps(item,separators=(",",":"))) for item in json.load(sys.stdin)]' >> /workspace/org-repos.jsonl
+           page=$((page + 1))
+         done
        Use commit_memory with key `org-repos-inventory` to save the repo list +
-       brief description for each. Re-enumerate on every restart so you stay current
-       with new repos.
+       brief description for each. Refresh it before future org-wide work so you stay
+       current with new repositories.
 
     3. Set up git hooks for the baseline: cd /workspace/repos/molecule-core && git config core.hooksPath .githooks
-    4. Read /workspace/repos/molecule-core/CLAUDE.md to understand the project conventions.
+    4. Read /workspace/repos/molecule-core/README.md. For every task, also read any
+       AGENTS.md or CLAUDE.md that actually exists in the target repository.
     5. Read your system prompt at /configs/system-prompt.md to understand your role + which
        org repos and cloud services are YOUR ownership area.
-    6. Save key conventions to memory so you recall them on every future task:
-       Use commit_memory to save: "CONVENTIONS: (1) Every canvas .tsx using hooks needs 'use client' as first line — run the grep check before committing. (2) Dark zinc theme only — never white/light. (3) Zustand selectors must not create new objects. (4) Always run npm test + npm run build before reporting done. (5) Use delegate_task to ask peers questions directly — don't guess API shapes. (6) Pre-commit hook at .githooks/pre-commit enforces these — commits will be rejected if violated. (7) When working in a non-core repo, clone it on demand under /workspace/repos/<name> and follow that repo's CLAUDE.md if present."
+    6. Save only conventions verified in the target repository's current files and CI.
+       Do not memorize a hard-coded org-wide command list: repository policies differ
+       and change over time.
     7. You are now ready. Wait for tasks from your parent — do not initiate contact.
 
 workspaces:
   - !include teams/pm.yaml
   - !include teams/marketing.yaml
   # Dev tree composed via gitops `!external` resolver (internal#77 / molecule-core#105).
-  # Platform fetches molecule-ai/molecule-dev-department at import time into a
-  # content-addressable cache under <orgBaseDir>/.external-cache/. No operator-
-  # side filesystem symlink, no sibling-clone deploy contract — the import is
-  # self-contained. Pinned to v1.0.0 (first stable atomized release;
-  # see molecule-ai/molecule-dev-department tags for newer versions).
+  # Platform fetches molecule-ai/molecule-dev-department from Gitea at import
+  # time into a content-addressable cache under <orgBaseDir>/.external-cache/.
+  # There is no host-filesystem sibling dependency.
+  # SECURITY HOLD: v1.0.0 has four enabled channels without literal allowlists
+  # (molecule-core#4340). The fix is in molecule-dev-department#15, but this ref must not
+  # move until an owner-approved release/tag exists. Release + exact-tag repin:
+  # molecule-ai/internal#1009. Do not treat this composed import as channel-safe
+  # until that issue is complete.
   - !external
     repo: molecule-ai/molecule-dev-department
     ref: v1.0.0

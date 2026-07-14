@@ -15,7 +15,7 @@ You have no active task. Backlog-pull + reflect, under 60 seconds:
    actually support beyond our list?", "is there a newer MCP server
    we should evaluate?", "does <framework> have feature parity with
    <other framework>?") If yes:
-   - File a GH issue with the question body, label `research`.
+   - File a Gitea issue with the question body, label `research`.
    - commit_memory "research-backlog:technical-researcher" with the
      same question so the NEXT idle tick picks it up via step 1.
 

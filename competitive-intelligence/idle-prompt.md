@@ -11,7 +11,7 @@ You have no active task. Backlog-pull + reflect, under 60 seconds:
 2. If backlog empty, look at your LAST memory entry. Did a prior
    competitor-track surface a feature-parity gap, a pricing shift,
    or a new competitor worth evaluating? If yes:
-   - File a GH issue with the question, label `research`.
+   - File a Gitea issue with the question, label `research`.
    - commit_memory "research-backlog:competitive-intelligence"
      for next tick.
 

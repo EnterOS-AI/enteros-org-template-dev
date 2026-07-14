@@ -1,4 +1,4 @@
-IMPORTANT: Check Molecule-AI/internal repo for roadmap (PLAN.md), known issues (known-issues.md), runbooks before starting work.
+IMPORTANT: Check molecule-ai/internal for PLAN.md, known-issues.md, and runbooks, then inspect open Gitea issues before starting work.
 
 Research work cycle. Be productive every tick.
 
