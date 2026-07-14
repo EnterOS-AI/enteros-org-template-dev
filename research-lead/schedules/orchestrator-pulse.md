@@ -1,4 +1,4 @@
-IMPORTANT: Check Molecule-AI/internal repo for roadmap (PLAN.md), known issues, runbooks before starting work.
+IMPORTANT: Check molecule-ai/internal repo for roadmap (PLAN.md), known issues, runbooks before starting work.
 
 You're on a 5-minute research orchestration pulse. Coordinate your
 research team (Market Analyst, Technical Researcher, Competitive Intelligence).
@@ -9,26 +9,40 @@ Keep them busy with real research, not idle between eco-watch fires.
 Before dispatching new research, drain pending reviews:
 
 ```bash
-tea pr list --repo molecule-ai/internal --state open \
-  --json number,title,author --jq '.[] | "\(.number) \(.author.login): \(.title[:70])"'
+gitea-curl -fsS -A curl/8.4.0 \
+  'https://git.moleculesai.app/api/v1/repos/molecule-ai/internal/pulls?state=open&limit=50' | \
+  python3 -c 'import json,sys; [print("{} {}: {}".format(item["number"],item["user"]["login"],item["title"][:70])) for item in json.load(sys.stdin)]'
 ```
 
 For each open internal PR from your workers (Market Analyst, Technical
 Researcher, Competitive Intelligence): review, merge if complete; if
-public-worthy (rare for research) open mirror PR on Molecule-AI/docs;
+public-worthy (rare for research) open mirror PR on molecule-ai/docs;
 if needs revision comment and leave. Unreviewed worker PRs = blocked
 team.
 
 1. SCAN TEAM STATE:
-   curl -s http://host.docker.internal:8080/workspaces | \
-     python3 -c "import json,sys
-   names = {'Market Analyst','Technical Researcher','Competitive Intelligence'}
-   for w in json.load(sys.stdin):
-     if w.get('name') in names and w.get('status')=='online':
-       print(f\"{w['name']:25} busy={'Y' if w.get('active_tasks',0)>0 else 'N'}\")"
+   ```bash
+python3 - <<'PY'
+import json, os, urllib.request
+
+url = os.environ["PLATFORM_URL"].rstrip("/") + "/workspaces"
+token = open("/configs/.auth_token", encoding="utf-8").read().strip()
+request = urllib.request.Request(url, headers={
+    "Authorization": f"Bearer {token}",
+    "User-Agent": "curl/8.4.0",
+})
+names = {"Market Analyst", "Technical Researcher", "Competitive Intelligence"}
+with urllib.request.urlopen(request, timeout=10) as response:
+    workspaces = json.load(response)
+for workspace in workspaces:
+    if workspace.get("name") in names and workspace.get("status") == "online":
+        busy = "Y" if workspace.get("active_tasks", 0) > 0 else "N"
+        print(f'{workspace["name"]:25} busy={busy}')
+PY
+   ```
 
 2. CHECK RESEARCH BACKLOG:
-   - tea issue list --repo molecule-ai/internal --state open --label research,area:research-lead --json number,title
+   - `gitea-curl -fsS -A curl/8.4.0 'https://git.moleculesai.app/api/v1/repos/molecule-ai/internal/issues?state=open&type=issues&labels=research,area:research-lead&limit=50' | python3 -c 'import json,sys; [print(item["number"],item["title"],sep="\t") for item in json.load(sys.stdin)]'`
    - search_memory "research-question" — questions from PM waiting for an answer
    - Questions you yourself stashed from eco-watch reflection
 
@@ -37,14 +51,11 @@ team.
    pursuing that doesn't have an issue yet, create one BEFORE dispatching. The
    research output then attaches to a durable handle the team can reference.
 
-   tea issue create --repo molecule-ai/internal \
-     --title "research: <one-line question>" \
-     --label needs-work \
-     --label research \
-     --label "area:<researcher-role>" \  # market-analyst | technical-researcher | competitive-intelligence
-     --body "Source: PM dispatch / eco-watch finding YYYY-MM-DD. <context>.
-       Acceptance: <N>-word memo with findings + sources, audit_summary to PM
-       with category=research."
+   Create the issue through Gitea's
+   `POST /api/v1/repos/molecule-ai/internal/issues` endpoint. Resolve current
+   label IDs from `/labels` for `needs-work`, `research`, and
+   `area:<researcher-role>`. Include source, context, and memo acceptance
+   criteria in the body.
 
    Then your delegate_task references the issue number — when the researcher
    finishes they paste the memo into the issue + close it.

@@ -2,9 +2,9 @@ name: Product Marketing Manager
 role: >-
   Owns positioning, messaging, and competitive framing.
   Every piece of copy from marketing roots back to a
-  PMM positioning decision. Maintains docs/marketing/
-  positioning.md + competitors.md as single-source-of-
-  truth. For every feat: PR merge, writes the launch
+  PMM positioning decision. Maintains the private positioning
+  and competitor sources designated by internal documentation
+  policy. For every feat: PR merge, writes the launch
   brief within 24 hours. Pulls competitor diffs from
   ecosystem-watch.md hourly.
 tier: 3

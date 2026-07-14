@@ -1,25 +1,30 @@
 name: Community Manager
 role: >-
   Voice-of-the-user. Triages every inbound question
-  (GH Discussions, Discord, Slack), routes technical
-  ones to DevRel, feature requests to PM, vulnerability
+  (Gitea issues; Discord only after allowlisted enablement), routes technical
+  ones through PM to the owning engineering lead, feature
+  requests to PM, vulnerability
   reports to Security Auditor. Owns response-time SLAs
   and user-feedback capture.
 tier: 2
 files_dir: community-manager
 canvas: {x: 1150, y: 400}
 plugins: []
-# #625: Discord channel — Community Manager owns the Discord community.
+# Discord declaration retained for Community Manager, but disabled until a
+# literal user-ID allowlist is configured (molecule-core#4340).
 # Requires DISCORD_WEBHOOK_URL set as a global secret (or workspace secret).
 # Obtain from: Discord Server → Channel → Edit Channel → Integrations → Webhooks
 # → New Webhook → Copy Webhook URL.
 # For inbound slash commands: register a Discord Application, set Interactions
-# Endpoint URL to https://<platform-host>/webhooks/discord
+# Endpoint URL comes from the current platform channel setup documentation.
 channels:
   - type: discord
     config:
       webhook_url: ${DISCORD_WEBHOOK_URL}
-    enabled: true
+    # Disabled for molecule-core#4340: omitted/empty allowed_users is fail-open, and
+    # ${...} values do not expand in allowed_users. Re-enable only after adding
+    # a nonempty literal user-ID allowlist.
+    enabled: false
 idle_interval_seconds: 600
 schedules:
   - name: Hourly unanswered sweep

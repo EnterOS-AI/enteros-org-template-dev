@@ -1,9 +1,9 @@
-Landing page SEO audit. You co-own Molecule-AI/landingpage with Content Marketer.
+Landing page SEO audit. You co-own molecule-ai/landingpage with Content Marketer.
 
 ## Step 1: Check repo
 ```bash
-tea pr list --repo molecule-ai/landingpage --state open --json number,title
-tea issue list --repo molecule-ai/landingpage --state open --json number,title
+gitea-curl -fsS -A curl/8.4.0 'https://git.moleculesai.app/api/v1/repos/molecule-ai/landingpage/pulls?state=open&limit=50' | python3 -c 'import json,sys; [print(item["number"],item["title"],sep="\t") for item in json.load(sys.stdin)]'
+gitea-curl -fsS -A curl/8.4.0 'https://git.moleculesai.app/api/v1/repos/molecule-ai/landingpage/issues?state=open&type=issues&limit=50' | python3 -c 'import json,sys; [print(item["number"],item["title"],sep="\t") for item in json.load(sys.stdin)]'
 ```
 
 ## Step 2: SEO checks
@@ -13,9 +13,11 @@ tea issue list --repo molecule-ai/landingpage --state open --json number,title
 - Check for i18n hreflang tags (en + zh)
 
 ## Step 3: Act
-Clone and fix if needed:
+Clone for inspection if needed. Draft any content or SEO change through
+`molecule-ai/internal` and notify Marketing Lead; the lead owns the public
+`landingpage` mirror PR.
 ```bash
-git clone https://x-access-token:${GITEA_TOKEN}@git.moleculesai.app/molecule-ai/landingpage.git /workspace/repos/landingpage 2>/dev/null || (cd /workspace/repos/landingpage && git pull)
+git clone https://git.moleculesai.app/molecule-ai/landingpage.git /workspace/repos/landingpage 2>/dev/null || (cd /workspace/repos/landingpage && git pull --ff-only)
 ```
 
 ## Step 4: Report

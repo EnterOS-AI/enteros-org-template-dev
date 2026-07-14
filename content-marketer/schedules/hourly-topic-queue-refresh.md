@@ -1,10 +1,12 @@
-IMPORTANT: Check Molecule-AI/internal repo for roadmap (PLAN.md), known issues, runbooks before starting work.
+IMPORTANT: Check molecule-ai/internal repo for roadmap (PLAN.md), known issues, runbooks before starting work.
 
 Refresh the topic backlog from recent signals.
 
-1. Pull: tea pr list --state merged --limit 10 --json title,number
-   + docs/ecosystem-watch.md last-week entries
-   + competitor blog feeds (Hermes, Letta, n8n — see positioning.md)
+1. Pull the ten newest merged Gitea PRs from the owning repositories via their
+   `/pulls?state=closed` API and filter for non-null `merged_at`
+   + `molecule-core/docs/ecosystem-watch.md` last-week entries at current Gitea `main`
+   + competitor blog feeds (Hermes, Letta, n8n — use the current private
+     positioning source located through `molecule-ai/internal` search)
 2. Rank candidates: technical-deep-dive vs positioning-story, target keyword pull.
 3. MULTIMEDIA — for published articles, consider audio supplements:
    - TTS: Generate audio versions of blog posts for podcast-style consumption.

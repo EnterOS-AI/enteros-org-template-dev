@@ -2,7 +2,7 @@
 
 This file defines shared context injected into every workspace agent in the
 `molecule-dev` org template. Individual role identities live in per-role
-`system-prompt.md` files (see `Molecule-AI/molecule-ai-org-template-molecule-dev`).
+`system-prompt.md` files (see `molecule-ai/molecule-ai-org-template-molecule-dev`).
 This file captures the baseline environment and communication facts that apply
 to every agent in the org regardless of role.
 
@@ -27,7 +27,8 @@ Files you can always rely on being present at runtime:
 ## Communication
 
 At startup, the runtime automatically generates `/workspace/AGENTS.md` from
-your `config.yaml` using `workspace-template/agents_md.py`, following the
+your `config.yaml` using
+`molecule-ai-workspace-runtime/molecule_runtime/agents_md.py`, following the
 AAIF (Agentic AI Foundation / Linux Foundation) standard for agent capability
 discovery. It describes your public surface — name, role, description, A2A
 endpoint, and available tools/plugins — in a machine-readable format that peer

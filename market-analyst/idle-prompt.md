@@ -11,7 +11,7 @@ You have no active task. Backlog-pull + reflect, under 60 seconds:
 2. If backlog empty, look at your LAST memory entry. Did a prior
    task surface a market-sizing follow-up, a user-research gap,
    or a pricing comparison worth doing? If yes:
-   - File a GH issue with the question, label `research`.
+   - File a Gitea issue with the question, label `research`.
    - commit_memory "research-backlog:market-analyst" for next tick.
 
 3. If neither, write "ma-idle HH:MM — clean" to memory and stop.

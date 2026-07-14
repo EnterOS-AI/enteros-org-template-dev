@@ -1,9 +1,9 @@
-IMPORTANT: Check Molecule-AI/internal repo for roadmap (PLAN.md), known issues, runbooks before starting work.
+IMPORTANT: Check molecule-ai/internal repo for roadmap (PLAN.md), known issues, runbooks before starting work.
 
 Hourly sweep of community channels.
 
-1. GH Discussions with 0 replies older than 1 hour — reply or route.
-2. GH Issues from external authors (not team) unanswered — acknowledge.
+1. Gitea issues framed as questions with no team reply after 1 hour — reply or route.
+2. Gitea issues from external authors that remain unanswered — acknowledge.
 3. TTS: For high-value welcome messages or onboarding guides, generate
    audio versions using TTS to make the community more accessible.
 4. Memory key 'community-sweep-HH' with counts + routed list.

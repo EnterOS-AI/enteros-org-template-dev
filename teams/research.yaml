@@ -12,7 +12,10 @@ channels:
     config:
       bot_token: ${TELEGRAM_BOT_TOKEN}
       chat_id: ${TELEGRAM_CHAT_ID}
-    enabled: true
+    # Disabled for molecule-core#4340: omitted/empty allowed_users is fail-open, and
+    # ${...} values do not expand in allowed_users. Re-enable only after adding
+    # a nonempty literal user-ID allowlist.
+    enabled: false
 idle_interval_seconds: 900
 schedules:
   - name: Orchestrator pulse (every 5 min)

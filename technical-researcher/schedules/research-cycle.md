@@ -1,12 +1,12 @@
-IMPORTANT: Check Molecule-AI/internal repo for roadmap (PLAN.md), known issues, runbooks before starting work.
+IMPORTANT: Check molecule-ai/internal repo for roadmap (PLAN.md), known issues, runbooks before starting work.
 
 Research cycle with web search. Run every 30 minutes.
 
 1. CHECK RESEARCH BACKLOG:
    search_memory "research-question:technical-researcher"
-   tea issue list --repo molecule-ai/molecule-core --state open \
-     --label research --label "area:technical-researcher" \
-     --json number,title --limit 5
+   gitea-curl -fsS -A curl/8.4.0 \
+     'https://git.moleculesai.app/api/v1/repos/molecule-ai/molecule-core/issues?state=open&type=issues&labels=research,area:technical-researcher&limit=5' | \
+     python3 -c 'import json,sys; [print(item["number"],item["title"],sep="\t") for item in json.load(sys.stdin)]'
 
 2. WEB SEARCH — for active research questions, use web_search to gather current info:
    - AI agent framework releases (LangChain, AutoGen, Swarm, etc.)
@@ -16,9 +16,9 @@ Research cycle with web search. Run every 30 minutes.
    - Conference talks, blog posts, technical papers
 
 3. PLUGIN CURATION (from hourly-plugin-curation):
-   - Survey plugins/ and workspace-template/builtin_tools/ for gaps
+   - Survey current plugin and workspace-template repositories on Gitea for gaps
    - External survey via web_search for new tools worth wrapping
-   - File GH issue for 1-3 highest-value plugin proposals
+   - File a Gitea issue for 1-3 highest-value plugin proposals
 
 4. SYNTHESIZE findings:
    - What changed since last cycle

@@ -1,5 +1,9 @@
 #!/usr/bin/env python3
-"""Validate a Molecule AI org template repo."""
+"""Run a local org-template smoke check.
+
+CI fetches the canonical schema validator from molecule-ai/molecule-ci on every
+run. This checked-in helper remains only for lightweight offline validation.
+"""
 import os, sys, yaml
 
 # Support !include and other custom YAML tags used by org templates.
@@ -8,6 +12,12 @@ import os, sys, yaml
 class PermissiveLoader(yaml.SafeLoader):
     pass
 
+class ExternalRef(dict):
+    """Opaque `!external` reference resolved by the platform at import time."""
+
+def _external_constructor(loader, node):
+    return ExternalRef(loader.construct_mapping(node))
+
 def _generic_constructor(loader, tag_suffix, node):
     if isinstance(node, yaml.MappingNode):
         return loader.construct_mapping(node)
@@ -15,6 +25,7 @@ def _generic_constructor(loader, tag_suffix, node):
         return loader.construct_sequence(node)
     return loader.construct_scalar(node)
 
+PermissiveLoader.add_constructor("!external", _external_constructor)
 PermissiveLoader.add_multi_constructor("!", _generic_constructor)
 
 errors = []
@@ -34,7 +45,7 @@ if not org.get("workspaces") and not org.get("defaults"):
 
 def validate_workspace(ws, path=""):
     # !include tags resolve to strings at parse time; skip non-dicts
-    if not isinstance(ws, dict):
+    if isinstance(ws, ExternalRef) or not isinstance(ws, dict):
         return []
     ws_errors = []
     name = ws.get("name", "<unnamed>")
@@ -59,7 +70,7 @@ if errors:
 def count_ws(nodes):
     c = 0
     for n in nodes:
-        if not isinstance(n, dict):
+        if isinstance(n, ExternalRef) or not isinstance(n, dict):
             continue
         c += 1
         c += count_ws(n.get("children", []))

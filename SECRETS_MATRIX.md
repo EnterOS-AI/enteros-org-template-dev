@@ -1,8 +1,13 @@
 # Secrets Matrix — Per-Role Least Privilege
 
-The platform supports per-workspace `.env` files (loaded by `org_import.go` and stored encrypted in `workspace_secrets`). Each role gets only the secrets it needs.
+The platform resolves template-declared per-workspace environment values and
+stores workspace secrets encrypted. Each role gets only the credentials it
+needs; this document describes capability classes, not a bundle to copy.
 
-**Resolution order:** Org-root `.env` (shared defaults) → per-workspace `<role>/.env` (overrides). Operator-managed; never committed.
+**Resolution order for template channel values:** per-workspace `<role>/.env`
+overrides org-root `.env`, then the platform environment. These files are an
+import surface for declared workspace integrations, never a production
+credential cache, and must not be committed.
 
 ---
 
@@ -10,52 +15,52 @@ The platform supports per-workspace `.env` files (loaded by `org_import.go` and 
 
 | Role | Secrets it gets | Scope of action enabled |
 |---|---|---|
-| **All workspaces** (org-root `.env`) | `CLAUDE_CODE_OAUTH_TOKEN` (or model-specific equivalent: `ANTHROPIC_API_KEY`, `OPENAI_API_KEY`) | Run the LLM. Required for any agent to think. |
-| **PM** | `TELEGRAM_BOT_TOKEN`, `TELEGRAM_CHAT_ID` (CEO comms only) | Send Telegram messages to CEO. Max 2-3/day per SHARED_RULES rule 11. |
-| **Dev Lead, Core Lead, App Lead, CP Lead, Infra Lead, SDK Lead** | `GH_TOKEN` (write) | `tea pr merge`, `tea issue close`, `tea pr review --approve` on the team's repo. SHARED_RULES rule 9: Leads merge in their domain. |
-| **Triage Operator** | `GH_TOKEN` (write, org-wide) | Cross-org triage: close stale, label, escalate. May merge mechanical PRs only. |
-| **Engineers** (Backend, Frontend, Full-stack, DevOps, Platform, SRE, etc.) | `GH_TOKEN` with **PR-author scope only** — can `tea pr create`, `tea issue create`, `tea pr comment`. **Cannot merge.** | Raise PRs and respond to review comments. Per SHARED_RULES rule 9: engineers don't merge. |
-| **QA Engineer** | `GH_TOKEN` (PR-comment scope) | Run tests + post `[qa-agent] APPROVED` / `CHANGES REQUESTED` comments. Required gate per rule 10. |
-| **Security Auditor, Offensive Security Engineer** | `GH_TOKEN` (PR-comment scope) | Post `[security-auditor-agent] APPROVED` / `CHANGES REQUESTED`. Required gate per rule 10. |
-| **UIUX Designer** | `GH_TOKEN` (PR-comment scope) | Post `[uiux-agent] APPROVED` / `CHANGES REQUESTED`. Required gate per rule 10. |
+| **All workspaces** | No shared provider token is assumed. Platform-managed model auth uses the platform token flow; BYOK values are supplied only when the selected runtime/model declares them. | Run the selected runtime without distributing an org-wide credential. |
+| **PM** | Optional `TELEGRAM_BOT_TOKEN`, `TELEGRAM_CHAT_ID` (CEO comms only) | Supply channel credentials only after a nonempty literal user-ID allowlist is configured and the channel is explicitly enabled. |
+| **Dev Lead, Core Lead, App Lead, CP Lead, Infra Lead, SDK Lead** | Persona-scoped `GITEA_TOKEN` with the repository permissions their role requires | Review and merge only within the team's repository and approval policy. |
+| **Triage Operator** | Persona-scoped `GITEA_TOKEN` for the repositories assigned to triage | Close stale work, label, and escalate. Mechanical merges still follow repository policy. |
+| **Engineers** (Backend, Frontend, Full-stack, DevOps, Platform, SRE, etc.) | Persona-scoped `GITEA_TOKEN` with PR-author/comment permissions | Raise PRs and respond to review comments. No implicit merge authority. |
+| **QA Engineer** | Persona-scoped `GITEA_TOKEN` with review/comment permissions | Run tests and post evidence-backed review outcomes. |
+| **Security Auditor, Offensive Security Engineer** | Persona-scoped `GITEA_TOKEN` with review/comment permissions | Post evidence-backed security review outcomes. |
+| **UIUX Designer** | Persona-scoped `GITEA_TOKEN` with review/comment permissions | Post evidence-backed UI/UX review outcomes. |
 | **Marketing Lead** | `LINKEDIN_ACCESS_TOKEN`, `LINKEDIN_ORG_ID`, `X_API_KEY`, `X_API_SECRET`, `X_BEARER_TOKEN`, `BUFFER_API_KEY`, `MAILCHIMP_API_KEY` | Publish content to social channels. Sole publisher. |
-| **Content Marketer, Social Media Brand, SEO Analyst** | NO publishing keys — `GH_TOKEN` (PR-author scope only) | Draft content via PRs to landing/docs/marketing repos. Marketing Lead reviews + publishes. |
-| **DevRel Engineer** | `GH_TOKEN` (PR-author + comment scope), `DISCORD_BOT_TOKEN` (read-only on community channel) | Code demos via PRs. Read Discord for community questions. Marketing Lead handles outbound posts. |
-| **Community Manager** | `SLACK_BOT_TOKEN`, `DISCORD_BOT_TOKEN` (read + post on community channels only) | Respond to community in Slack/Discord. No GitHub write. |
-| **Research Lead, Market Analyst, Competitive Intelligence, Tech Researcher** | `GH_TOKEN` (PR-author + issue-create scope), `BRAVE_SEARCH_API_KEY` or `PERPLEXITY_API_KEY` | File research issues + PRs. No merge, no marketing publish. |
-| **DevOps Engineer, SRE Engineer, Infra-Runtime-BE** | `GH_TOKEN` (write), `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY` (scoped IAM role), `CLOUDFLARE_API_TOKEN` (DNS-only scope), `FLY_API_TOKEN`, `VERCEL_TOKEN` | Deploy + ops. Production access — heaviest scrutiny on changes. |
-| **CP-BE, CP-QA, CP-Security** (control-plane) | `GH_TOKEN` (write on molecule-controlplane only), `AWS_ACCESS_KEY_ID/SECRET` (CP IAM role) | Control-plane code. CP Lead merges. |
-| **Documentation Specialist, Technical Writer** | `GH_TOKEN` (PR-author scope on docs/landingpage repos) | Doc PRs only. No code-repo write. |
-| **Release Manager** | `GH_TOKEN` (write on all repos), `NPM_TOKEN`, `PYPI_TOKEN` | Tag releases + publish packages after Lead-approved PRs land. |
+| **Content Marketer, Social Media Brand, SEO Analyst** | Persona-scoped `GITEA_TOKEN`; no publishing keys | Draft content through internal/public PR review. Marketing Lead controls publication. |
+| **Community Manager** | Only the native channel credentials declared for assigned community surfaces | Respond only on channels with a nonempty literal user-ID allowlist and explicit enablement; SCM write requires a separately scoped persona token. |
+| **Research Lead, Market Analyst, Competitive Intelligence, Tech Researcher** | Persona-scoped `GITEA_TOKEN`; scoped search API credential when provisioned | File research issues and PRs. No merge or marketing publication authority. |
+| **DevOps Engineer, SRE Engineer, Infra-Runtime-BE** | Persona-scoped `GITEA_TOKEN` plus a path-scoped Infisical identity | Fetch exactly the operational secret required for an authorized action; no standing provider-key bundle. |
+| **CP-BE, CP-QA, CP-Security** (control plane) | Persona-scoped `GITEA_TOKEN` for `molecule-controlplane` | Work on provider-aware CP code. Cloud-provider support does not grant direct production credentials. |
+| **Documentation Specialist, Technical Writer** | Persona-scoped `GITEA_TOKEN` for assigned documentation repositories | Documentation PRs only. |
+| **Release Manager** | Persona-scoped `GITEA_TOKEN`; package-publish credentials fetched by the authorized release workflow | Tag and publish only after repository gates pass. |
 
 ---
 
 ## Why this matters
 
-- **Prompt-injection blast radius**: an attacker who exfiltrates a workspace's secrets via prompt injection only gets that role's keys. Engineer compromise ≠ org-wide write. Marketing Compromise ≠ Telegram CEO message.
+- **Prompt-injection blast radius**: an attacker who exfiltrates a workspace's secrets via prompt injection only gets that role's keys. Engineer compromise ≠ org-wide write. Marketing compromise ≠ another role's channel credential.
 - **Audit trail**: when something goes wrong, the secret used identifies the role that did it.
-- **Operator clarity**: copy `<role>/.env.example` to `<role>/.env`, paste the right keys, don't put production secrets in roles that don't need them.
+- **Provisioning clarity**: populate only the integration values declared by
+  the selected workspaces; never copy a production credential bundle.
 
 ---
 
-## Operator setup
+## Workspace-secret setup
 
-For each role's `.env.example`, copy to `.env` and fill in real values:
+Use the platform's template-import secret flow. For self-hosted imports that
+use `.env`, start from only the relevant role's `.env.example`, populate the
+declared integration values, keep the file uncommitted and mode-restricted, and
+remove it after successful import. The platform encrypts persisted workspace
+secrets.
 
-```bash
-cd org-templates/molecule-dev
-for role in dev-lead marketing-lead infra-lead pm; do
-  cp $role/.env.example $role/.env  # then edit $role/.env
-done
-```
-
-`.env` files are gitignored. The platform encrypts them on import to `workspace_secrets`.
+Native-channel credentials alone are not authorization. Keep a channel
+disabled unless its YAML entry has a nonempty list of literal user IDs in
+`allowed_users`. Omitted/empty lists are fail-open in current core, and
+`${...}` references are not expanded in this field (`molecule-core#4340`).
 
 ---
 
-## Future hardening (filed in `internal/security/credential-token-backlog.md`)
+## Ongoing hardening
 
-- Per-agent GitHub Apps (not shared org-wide token) — eliminates blast radius via #7 in backlog
+- Periodic audits of persona-token scopes and unused identities
 - Egress filtering on workspace networks — limits what an exfiltrated secret can be sent to
 - Volume encryption at rest — protects `.env` in workspace volumes from backup leak
 - Token issuance audit logging — answers "who fetched the org token at time X?"
