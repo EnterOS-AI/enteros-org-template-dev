@@ -95,32 +95,56 @@ repository:
 ### How to write to the internal repo (copy-paste this)
 
 ```bash
-# Concrete example values; change these assignments for the work at hand.
-ROLE_SLUG="social-media-brand"
-TOPIC_SLUG="social-campaign"
-DATE_UTC="$(date -u +%F)"
-AREA="historical/marketing"
-DOC_SLUG="social-campaign"
-BRANCH="${ROLE_SLUG}/${TOPIC_SLUG}-${DATE_UTC}"
-DOC_PATH="${AREA}/${DOC_SLUG}.md"
-PR_TITLE="${ROLE_SLUG}: add ${DOC_SLUG}"
-PR_BODY="Adds ${DOC_PATH} for internal review."
+(
+  set -euo pipefail
 
-mkdir -p ~/repos
-test -d ~/repos/internal || git clone https://git.moleculesai.app/molecule-ai/internal.git ~/repos/internal
+  # Concrete example values; change these assignments for the work at hand.
+  ROLE_SLUG="social-media-brand"
+  TOPIC_SLUG="social-campaign"
+  WORKFLOW_RUN_ID="${WORKFLOW_RUN_ID:-$(date -u +%Y%m%dT%H%M%SZ)-$$}"
+  AREA="historical/marketing"
+  DOC_SLUG="social-campaign"
+  BRANCH="${ROLE_SLUG}/${TOPIC_SLUG}-${WORKFLOW_RUN_ID}"
+  DOC_PATH="${AREA}/${DOC_SLUG}.md"
+  PR_TITLE="${ROLE_SLUG}: add ${DOC_SLUG}"
+  PR_BODY="Adds ${DOC_PATH} for internal review."
+  INTERNAL_REPO_URL="${INTERNAL_REPO_URL:-https://git.moleculesai.app/molecule-ai/internal.git}"
+  INTERNAL_REPO_DIR="${INTERNAL_REPO_DIR:-${HOME:?HOME is required}/repos/internal}"
 
-cd ~/repos/internal
-git switch main
-git pull --ff-only origin main
-git switch -c "$BRANCH"
-mkdir -p "$AREA"
-"${EDITOR:-vi}" "$DOC_PATH"
-git add -- "$DOC_PATH"
-git commit -m "$PR_TITLE"
-git push -u origin HEAD
-printf 'Open a Gitea PR with base=main, head=%s, title=%s, body=%s\n' \
-  "$BRANCH" "$PR_TITLE" "$PR_BODY"
-# Use those values in the Gitea web UI or with credential-safe gitea-curl.
+  mkdir -p "$(dirname "$INTERNAL_REPO_DIR")"
+  if [ -e "$INTERNAL_REPO_DIR" ] && [ ! -d "$INTERNAL_REPO_DIR/.git" ]; then
+    printf 'Refusing non-Git path: %s\n' "$INTERNAL_REPO_DIR" >&2
+    exit 1
+  fi
+  if [ ! -d "$INTERNAL_REPO_DIR/.git" ]; then
+    git clone "$INTERNAL_REPO_URL" "$INTERNAL_REPO_DIR"
+  fi
+
+  cd "$INTERNAL_REPO_DIR"
+  if [ "$(git remote get-url origin)" != "$INTERNAL_REPO_URL" ]; then
+    printf 'Refusing unexpected origin in %s\n' "$INTERNAL_REPO_DIR" >&2
+    exit 1
+  fi
+  if [ -n "$(git status --porcelain)" ]; then
+    printf 'Refusing dirty repository: %s\n' "$INTERNAL_REPO_DIR" >&2
+    exit 1
+  fi
+  git switch main
+  git pull --ff-only origin main
+  git switch -c "$BRANCH"
+  mkdir -p "$AREA"
+  "${EDITOR:-vi}" "$DOC_PATH"
+  git add -- "$DOC_PATH"
+  if git diff --cached --quiet; then
+    printf 'No document changes to commit: %s\n' "$DOC_PATH" >&2
+    exit 1
+  fi
+  git commit -m "$PR_TITLE"
+  git push -u origin "$BRANCH"
+  printf 'Open a Gitea PR with base=main, head=%s, title=%s, body=%s\n' \
+    "$BRANCH" "$PR_TITLE" "$PR_BODY"
+  # Use those values in the Gitea web UI or with credential-safe gitea-curl.
+)
 ```
 
 If your file is genuinely public-facing, draft it internally and notify
