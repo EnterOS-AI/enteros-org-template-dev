@@ -8,12 +8,15 @@ role: >-
 tier: 2
 files_dir: seo-growth-analyst
 canvas: {x: 1000, y: 400}
-plugins: [browser-automation]
+plugins:
+  - browser-automation
+  - source: gitea://molecule-ai/molecule-ai-plugin-scheduler#v0.2.0
+    config:
+      schedules:
+          - name: Daily Lighthouse + keyword audit
+            cron_expr: "23 8 * * *"
+            enabled: true
+            prompt_file: schedules/daily-lighthouse-keyword-audit.md
 idle_interval_seconds: 600
-schedules:
-  - name: Daily Lighthouse + keyword audit
-    cron_expr: "23 8 * * *"
-    enabled: true
-    prompt_file: schedules/daily-lighthouse-keyword-audit.md
 initial_prompt_file: initial-prompt.md
 idle_prompt_file: idle-prompt.md

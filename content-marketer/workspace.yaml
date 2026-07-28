@@ -10,12 +10,15 @@ role: >-
 tier: 2
 files_dir: content-marketer
 canvas: {x: 1300, y: 250}
-plugins: [molecule-skill-llm-judge]
+plugins:
+  - molecule-skill-llm-judge
+  - source: gitea://molecule-ai/molecule-ai-plugin-scheduler#v0.2.0
+    config:
+      schedules:
+          - name: Hourly topic queue refresh
+            cron_expr: "41 * * * *"
+            enabled: true
+            prompt_file: schedules/hourly-topic-queue-refresh.md
 idle_interval_seconds: 600
-schedules:
-  - name: Hourly topic queue refresh
-    cron_expr: "41 * * * *"
-    enabled: true
-    prompt_file: schedules/hourly-topic-queue-refresh.md
 initial_prompt_file: initial-prompt.md
 idle_prompt_file: idle-prompt.md

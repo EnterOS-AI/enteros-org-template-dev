@@ -8,13 +8,18 @@ tier: 3
 runtime: claude-code
 model: MiniMax-M2.7
 files_dir: marketing-lead
-plugins: [molecule-skill-code-review, molecule-skill-llm-judge, browser-automation]
+plugins:
+  - molecule-skill-code-review
+  - molecule-skill-llm-judge
+  - browser-automation
+  - source: gitea://molecule-ai/molecule-ai-plugin-scheduler#v0.2.0
+    config:
+      schedules:
+          - name: Orchestrator pulse (every 5 min)
+            cron_expr: "4,9,14,19,24,29,34,39,44,49,54,59 * * * *"
+            enabled: true
+            prompt_file: schedules/orchestrator-pulse.md
 idle_interval_seconds: 900
-schedules:
-  - name: Orchestrator pulse (every 5 min)
-    cron_expr: "4,9,14,19,24,29,34,39,44,49,54,59 * * * *"
-    enabled: true
-    prompt_file: schedules/orchestrator-pulse.md
 children:
   # devrel-engineer was an orphan in parent (no body files); deleted
   # during Phase 3d slim. If marketing needs a DevRel role going forward,

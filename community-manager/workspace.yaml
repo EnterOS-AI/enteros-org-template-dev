@@ -9,7 +9,14 @@ role: >-
 tier: 2
 files_dir: community-manager
 canvas: {x: 1150, y: 400}
-plugins: []
+plugins:
+  - source: gitea://molecule-ai/molecule-ai-plugin-scheduler#v0.2.0
+    config:
+      schedules:
+          - name: Hourly unanswered sweep
+            cron_expr: "12 * * * *"
+            enabled: true
+            prompt_file: schedules/hourly-unanswered-sweep.md
 # Discord declaration retained for Community Manager, but disabled until a
 # literal user-ID allowlist is configured (molecule-core#4340).
 # Requires DISCORD_WEBHOOK_URL set as a global secret (or workspace secret).
@@ -26,10 +33,5 @@ channels:
     # a nonempty literal user-ID allowlist.
     enabled: false
 idle_interval_seconds: 600
-schedules:
-  - name: Hourly unanswered sweep
-    cron_expr: "12 * * * *"
-    enabled: true
-    prompt_file: schedules/hourly-unanswered-sweep.md
 initial_prompt_file: initial-prompt.md
 idle_prompt_file: idle-prompt.md

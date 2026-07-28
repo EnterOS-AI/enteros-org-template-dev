@@ -6,7 +6,16 @@ files_dir: pm
 workspace_dir: ${WORKSPACE_DIR}
 canvas: {x: 400, y: 50}
     # PM-specific: /triage (PR triage) and /retro (weekly retrospective).
-plugins: [molecule-workflow-triage, molecule-workflow-retro]
+plugins:
+  - molecule-workflow-triage
+  - molecule-workflow-retro
+  - source: gitea://molecule-ai/molecule-ai-plugin-scheduler#v0.2.0
+    config:
+      schedules:
+          - name: Orchestrator pulse
+            cron_expr: "1,6,11,16,21,26,31,36,41,46,51,56 * * * *"
+            enabled: true
+            prompt_file: schedules/orchestrator-pulse.md
     # Telegram credentials come from pm/.env, but auto-link remains disabled
     # until a nonempty literal allowed_users list is configured (molecule-core#4340).
 channels:
@@ -17,11 +26,6 @@ channels:
     # ${...} values do not expand in allowed_users; omitted/empty is fail-open.
     # Re-enable only after adding a nonempty literal user-ID allowlist.
     enabled: false
-schedules:
-  - name: Orchestrator pulse
-    cron_expr: "1,6,11,16,21,26,31,36,41,46,51,56 * * * *"
-    enabled: true
-    prompt_file: schedules/orchestrator-pulse.md
 children:
   - !include research.yaml
   # Dev tree extracted to molecule-ai/molecule-dev-department (internal#77).

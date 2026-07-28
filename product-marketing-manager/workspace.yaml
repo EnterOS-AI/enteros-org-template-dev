@@ -11,12 +11,16 @@ tier: 3
 model: opus
 files_dir: product-marketing-manager
 canvas: {x: 1150, y: 250}
-plugins: [molecule-skill-code-review, molecule-skill-llm-judge]
+plugins:
+  - molecule-skill-code-review
+  - molecule-skill-llm-judge
+  - source: gitea://molecule-ai/molecule-ai-plugin-scheduler#v0.2.0
+    config:
+      schedules:
+          - name: Hourly competitor diff
+            cron_expr: "33 * * * *"
+            enabled: true
+            prompt_file: schedules/hourly-competitor-diff.md
 idle_interval_seconds: 600
-schedules:
-  - name: Hourly competitor diff
-    cron_expr: "33 * * * *"
-    enabled: true
-    prompt_file: schedules/hourly-competitor-diff.md
 initial_prompt_file: initial-prompt.md
 idle_prompt_file: idle-prompt.md
