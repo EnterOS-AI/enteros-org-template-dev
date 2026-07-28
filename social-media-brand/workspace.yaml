@@ -8,12 +8,14 @@ role: >-
 tier: 2
 files_dir: social-media-brand
 canvas: {x: 1300, y: 400}
-plugins: []
+plugins:
+  - source: gitea://molecule-ai/molecule-ai-plugin-scheduler#v0.2.0
+    config:
+      schedules:
+          - name: Hourly mention monitor
+            cron_expr: "27 * * * *"
+            enabled: true
+            prompt_file: schedules/hourly-mention-monitor.md
 idle_interval_seconds: 600
-schedules:
-  - name: Hourly mention monitor
-    cron_expr: "27 * * * *"
-    enabled: true
-    prompt_file: schedules/hourly-mention-monitor.md
 initial_prompt_file: initial-prompt.md
 idle_prompt_file: idle-prompt.md
