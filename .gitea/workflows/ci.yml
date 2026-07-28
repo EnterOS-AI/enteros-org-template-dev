@@ -46,9 +46,12 @@ jobs:
         run: |
           python3 -m unittest scripts/test_channel_allowlists.py
           python3 scripts/check_channel_allowlists.py
+      # ONE validator, fetched fresh from the SSOT. The repo used to ALSO run a
+      # vendored .molecule-ci/scripts/validate-org-template.py, which had drifted
+      # 55 lines behind (80 vs 135) and ran FIRST, so a stale hand-rolled check
+      # gated this repo ahead of the canonical schema validator.
       - name: Validate template shape
         run: |
-          python3 .molecule-ci/scripts/validate-org-template.py
           python3 .molecule-ci-canonical/.molecule-ci/scripts/validate-org-template.py
 
   validate:
