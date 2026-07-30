@@ -53,6 +53,23 @@ jobs:
       - name: Validate template shape
         run: |
           python3 .molecule-ci-canonical/.molecule-ci/scripts/validate-org-template.py
+      # SHAPE (above) and WIRING (here) are different questions. The 2026-07-27
+      # audit found 35 of 37 fleet schedules shape-valid AND unreachable at once —
+      # a shape gate cannot see "declared but nothing reads it".
+      #
+      # This repo is the one that made it concrete: all 9 of its schedules sat in
+      # the legacy top-level `schedules:` location, and molecule-core's manifest
+      # pinned this template at a pre-migration SHA, so production shipped the dead
+      # shape while main looked migrated (core#4952).
+      - name: Validate schedule wiring
+        run: |
+          set -o pipefail
+          python3 .molecule-ci-canonical/.molecule-ci/scripts/validate_schedule_wiring.py \
+            | tee /tmp/schedule-wiring.log
+      - name: Assert the wiring gate actually ran
+        # This repo declares 9 schedules across teams/ and per-agent workspace.yaml
+        # files. A clean run that scanned nothing would read as coverage.
+        run: grep -q 'schedule wiring OK' /tmp/schedule-wiring.log
 
   validate:
     name: validate
